@@ -1,9 +1,10 @@
+-- Set tabstop to 4 spaces
+vim.o.tabstop = 4
+-- Set shiftwidth to 4 spaces
+vim.o.shiftwidth = 4
+
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
-
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.o.expandtab = true
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -18,14 +19,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Custom command to open nvim-tree
-vim.cmd([[ command! -nargs=* E NvimTreeToggle ]])
-
--- Keybinding for header42
-vim.api.nvim_set_keymap('n', '<F1>', ':lua require("header42").add_header()<CR>', { noremap = true, silent = true })
-
--- Enable clipboard support
-vim.cmd('set clipboard+=unnamedplus')
+vim.api.nvim_set_keymap('n', '<C-c>', ':NvimTreeClose<CR>', { noremap = true, silent = true })
 
 require("core.options")
 require("core.keymaps")
