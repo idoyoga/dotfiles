@@ -1,4 +1,4 @@
-set -Ux fish_user_paths /usr/bin/tmux $fish_user_paths
+set -x PATH $PATH /usr/bin/tmux 
 
 if status is-interactive
 alias cc='cc -Werror -Wall -Wextra'
@@ -20,13 +20,14 @@ alias gsw='git switch'
 alias n='flatpak run io.neovim.nvim'
 alias v='vim .'
 alias t='tmux attach-session -t default || tmux new-session -s default'
+alias tk='tmux kill-session -t default'
 alias francinette="$HOME"/francinette-image/run.sh
 alias paco="$HOME"/francinette-image/run.sh
 
 function fish_prompt
     set_color $fish_color_cwd
     # Display the current working directory
-    echo -n (prompt_pwd)
+    echo -n (whoami)
     
     # Display the current git branch if in a git repository
     if test -d .git
