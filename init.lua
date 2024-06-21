@@ -1,8 +1,9 @@
--- Set tabstop to 4 spaces
+vim.o.autoindent = true
+vim.o.cindent = true
+vim.o.expandtab = true
 vim.o.tabstop = 4
--- Set shiftwidth to 4 spaces
 vim.o.shiftwidth = 4
-
+vim.wo.number = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
