@@ -1,11 +1,12 @@
-vim.o.autoindent = true
-vim.o.cindent = true
-vim.o.expandtab = true
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.wo.number = true
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
+
+vim.cmd('syntax on')
+vim.cmd('filetype plugin indent on')
+
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -20,7 +21,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-vim.api.nvim_set_keymap('n', '<C-c>', ':NvimTreeClose<CR>', { noremap = true, silent = true })
+-- Custom command to open nvim-tree
+vim.cmd([[ command! -nargs=* E NvimTreeToggle ]])
+
+-- Keybinding for header42
+vim.api.nvim_set_keymap('n', '<F1>', ':lua require("header42").add_header()<CR>', { noremap = true, silent = true })
+
+-- Enable clipboard support
+vim.cmd('set clipboard+=unnamedplus')
 
 require("core.options")
 require("core.keymaps")

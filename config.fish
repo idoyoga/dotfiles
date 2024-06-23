@@ -1,5 +1,3 @@
-set -x PATH $PATH /usr/bin/tmux 
-
 if status is-interactive
 alias cc='cc -Werror -Wall -Wextra'
 alias nor='norminette -R CheckForbiddenSourceHeader'
@@ -17,18 +15,22 @@ alias gch='git checkout'
 alias gb='git branch'
 alias gr='git remote'
 alias gsw='git switch'
-alias n='flatpak run io.neovim.nvim'
 alias v='vim .'
+alias n='nvim'
+function n
+	if test (count $argv) -eq 0
+		nvim .
+	else
+		nvim $argv
+	end
+end
 alias t='tmux attach-session -t default || tmux new-session -s default'
-alias tk='tmux kill-session -t default'
-alias francinette="$HOME"/francinette-image/run.sh
-alias paco="$HOME"/francinette-image/run.sh
-
+alias francinette="$HOME"/francinette/tester.sh
+alias paco="$HOME"/francinette/tester.sh
 function fish_prompt
-    set_color $fish_color_cwd
-    # Display the current working directory
-    echo -n (whoami)
-    
+        set user_color green
+        set_color $user_color
+        echo -n (whoami)
     # Display the current git branch if in a git repository
     if test -d .git
         set_color $fish_color_cwd
@@ -42,11 +44,8 @@ function fish_prompt
     set_color normal
     echo -n ' > '
 end
-
-  #function fish_prompt
-  #set_color $fish_color_cwd
-  #echo -n (prompt_pwd)
-  #set_color blue
-  #echo -n ' ) '
-  #end
 end
+set -gx PATH /home/dp/.local/funcheck/host $PATH
+
+# Created by `pipx` on 2024-06-16 14:11:13
+set PATH $PATH /home/dp/.local/bin
