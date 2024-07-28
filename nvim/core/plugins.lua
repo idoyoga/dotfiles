@@ -41,7 +41,7 @@ require("lazy").setup({
 	"vinicius507/header42.nvim",
 	opts = {
 		login = "dplotzl",
-		email = "marvin@42.fr",
+		email = "dplotzl@student.42vienna.com",
 	}
   }
 })
