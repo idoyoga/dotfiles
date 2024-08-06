@@ -1,4 +1,7 @@
-if status is-interactive
+# Set the PATH variable correctly
+set -gx PATH /bin /usr/bin /usr/local/bin $PATH
+
+#if status is-interactive
 alias cc='cc -Werror -Wall -Wextra'
 alias nor='norminette -R CheckForbiddenSourceHeader'
 alias c='clear'
@@ -43,7 +46,6 @@ function fish_prompt
     
     set_color normal
     echo -n ' > '
-end
 end
 set -gx PATH /home/dp/.local/funcheck/host $PATH
 

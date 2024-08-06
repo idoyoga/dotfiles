@@ -6,6 +6,9 @@ local lspconfig = require('lspconfig')
 
 local lsp_defaults = lspconfig.util.default_config
 
+-- Example for C/C++
+lspconfig.clangd.setup{}
+
 lsp_defaults.capabilities = vim.tbl_deep_extend(
   'force',
   lsp_defaults.capabilities,

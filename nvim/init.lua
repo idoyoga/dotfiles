@@ -33,4 +33,15 @@ vim.cmd('set clipboard+=unnamedplus')
 require("core.options")
 require("core.keymaps")
 require("core.plugins")
-require("core.plugin_config")
+
+-- Load plugin-specific configurations
+-- Assuming you have files for each plugin inside `plugin_config/`
+local plugin_config_dir = vim.fn.stdpath('config') .. '/lua/core/plugin_config/'
+local plugin_configs = { 'lualine', 'nvim-tree', 'telescope', 'colorscheme', 'treesitter', 'vim-test', 'completions', 'mason', 'lsp_config', 'gitsigns', 'copilot', 'oil', 'markdown_preview', 'swagger-preview', 'nvim-tree'} -- List your plugin config files here
+
+for _, config in ipairs(plugin_configs) do
+  local success, err = pcall(require, 'core.plugin_config.' .. config)
+  if not success then
+    print('Error loading plugin config: ' .. err)
+  end
+end

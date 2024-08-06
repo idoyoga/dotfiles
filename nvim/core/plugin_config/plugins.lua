@@ -24,6 +24,7 @@ require("lazy").setup({
   "github/copilot.vim",
   "williamboman/mason.nvim",
   "williamboman/mason-lspconfig.nvim",
+  "jose-elias-avarez/null-ls.nvim",
   "neovim/nvim-lspconfig",
   {
     "vinnymeller/swagger-preview.nvim",
