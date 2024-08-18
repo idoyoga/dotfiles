@@ -39,5 +39,16 @@ require("lazy").setup({
       require("nvim-tree").setup {}
     end
   },
+
+  -- nvim-surround plugin
+  {
+    "kylechui/nvim-surround",
+    event = "VeryLazy", -- Optionally lazy-load on specific events
+    config = function()
+      require("nvim-surround").setup({
+        -- Configuration here, or leave empty to use defaults
+      })
+    end
+  },
 })
 
