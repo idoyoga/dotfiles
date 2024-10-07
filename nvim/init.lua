@@ -11,10 +11,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
+vim.opt.clipboard = "unnamedplus"
 
 -- Custom command to open nvim-tree
 vim.cmd([[ command! -nargs=* E NvimTreeToggle ]])
 vim.keymap.set('n', '<c-n>', ':NvimTreeFindFile<CR>')
+vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 
 require ("joestar")
 require ("joestar.plugins")
