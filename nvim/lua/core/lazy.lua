@@ -51,7 +51,38 @@ require("lazy").setup({
   end
 },
 
-  -- nvim-surround plugin
+-- GitHub Copilot Plugin
+--    {
+--        "github/copilot.vim",
+--        config = function()
+            -- Optionally, you can add Copilot-specific settings here
+--        end
+--    },
+
+-- Add presence.nvim plugin
+    {
+        "andweeb/presence.nvim",
+        config = function()
+            require("presence"):setup({
+                -- Optional configuration settings here
+                -- You can specify Neovim activity events, custom client IDs, etc.
+    auto_update = true,  -- Enable auto-updating of Discord status
+ -- General settings
+    neovim_image_text   = "Neovim",    -- Text displayed under the Neovim icon
+    main_image          = "file",      -- Main image in Discord presence ("file" or "neovim")
+
+    -- Rich Presence text options
+    editing_text        = "Editing %s",-- Text when editing a file
+    file_explorer_text  = "Browsing %s",-- Text when browsing a file
+    git_commit_text     = "Committing changes",-- Text when making a git commit
+    plugin_manager_text = "Managing plugins",-- Text when managing plugins
+    reading_text        = "Reading %s", -- Text when in read-only mode
+    line_number_text    = "Line %s out of %s", -- Line number text
+    })
+  end
+},
+
+-- nvim-surround plugin
   {
     "kylechui/nvim-surround",
 --    event = "VeryLazy", -- Optionally lazy-load on specific events

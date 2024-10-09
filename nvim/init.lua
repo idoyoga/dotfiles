@@ -13,13 +13,8 @@ end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = "unnamedplus"
 
--- Custom command to open nvim-tree
-vim.cmd([[ command! -nargs=* E NvimTreeToggle ]])
-vim.keymap.set('n', '<c-n>', ':NvimTreeFindFile<CR>')
-vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
-
-require ("joestar")
-require ("joestar.plugins")
-require ("joestar.lazy")
-require ("joestar.remaps")
-require ("joestar.settings")
+require ("core")
+require ("core.plugins")
+require ("core.lazy")
+require ("core.keymaps")
+require ("core.settings")

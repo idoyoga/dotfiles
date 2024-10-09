@@ -49,10 +49,6 @@ vim.keymap.set("n", "<leader><leader>", function()
 	vim.cmd("so")
 	-- ~/.config/nvim/lua/core/keymaps.lua
 
-	-- Keybinding to toggle Nvim Tree
-	vim.api.nvim_set_keymap('n', '<Leader>e', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-	local opts = { noremap = true, silent = true }
-
 	-- Define keybindings for LSP commands
 	vim.api.nvim_set_keymap('n', '<leader>gd', ':lua vim.lsp.buf.definition()<CR>', opts)               -- Go to definition
 	vim.api.nvim_set_keymap('n', '<leader>gi', ':lua vim.lsp.buf.implementation()<CR>', opts)           -- Go to implementation
@@ -71,3 +67,7 @@ vim.keymap.set("n", "<leader><leader>", function()
 	-- Mapping Ctrl + l to move the cursor right in insert mode
 	vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 end)
+-- Custom command to open nvim-tree
+vim.keymap.set('n', '<C-n>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
+

@@ -1,8 +1,19 @@
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
 
-local lspconfig = require('lspconfig')
+-- Global LSP capabilities
+local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+-- Configure capabilities globally for all servers (including Copilot)
+capabilities.offset_encoding = { 'utf-8', 'utf-16' }  -- Allow both utf-8 and utf-16
+
+local lspconfig = require('lspconfig')
+lspconfig.lua_ls.setup {
+  capabilities = vim.lsp.protocol.make_client_capabilities(),
+  on_attach = function(client, bufnr)
+    client.offset_encoding = 'utf-16'  -- Set the encoding to match Copilot
+  end,
+}
 -- Configure the TypeScript/JavaScript language server
 lspconfig.clangd.setup{}
 -- You can add additional configuration options here if needed
