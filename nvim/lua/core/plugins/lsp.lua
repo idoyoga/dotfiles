@@ -1,72 +1,74 @@
 local cmp = require('cmp')
-local cmp_select = {behavior = cmp.SelectBehavior.Select}
 
 -- Global LSP capabilities
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-
--- Configure capabilities globally for all servers (including Copilot)
-capabilities.offset_encoding = { 'utf-8', 'utf-16' }  -- Allow both utf-8 and utf-16
+capabilities.offset_encoding = { 'utf-8', 'utf-16' }
 
 local lspconfig = require('lspconfig')
+
+-- Setup Lua Language Server
 lspconfig.lua_ls.setup {
-  capabilities = vim.lsp.protocol.make_client_capabilities(),
-  on_attach = function(client, bufnr)
-    client.offset_encoding = 'utf-16'  -- Set the encoding to match Copilot
-  end,
+  capabilities = capabilities,
 }
--- Configure the TypeScript/JavaScript language server
-lspconfig.clangd.setup{}
--- You can add additional configuration options here if needed
-  -- For example, specify the path to the clangd executable if it's not in your PATH
-  -- cmd = { "path/to/clangd" },
 
-  -- Additional settings can be customized here
-  -- e.g., setting up specific arguments or paths
+-- Setup other language servers
+lspconfig.clangd.setup {}
 
-
--- If you also work with CMake projects, you might want to use the `cmake` language server
--- lspconfig.cmake.setup{}
-
--- If you want to use any other LSP servers, configure them here
-
+-- Configure completion
 cmp.setup({
-  sources = {
-    {name = 'path'},
-    {name = 'nvim_lsp'},
-    {name = 'luasnip', keyword_length = 2},
-    {name = 'buffer', keyword_length = 3},
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = {
+      border = "rounded",
+      position = { col = 0, row = 1 },  -- Below the cursor
+    },
   },
   mapping = cmp.mapping.preset.insert({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
     ['<C-Space>'] = cmp.mapping.complete(),
   }),
+  sources = {
+    { name = 'path' },
+    { name = 'nvim_lsp' },
+    { name = 'luasnip', keyword_length = 2 },
+    { name = 'buffer', keyword_length = 3 },
+  },
   snippet = {
     expand = function(args)
       require('luasnip').lsp_expand(args.body)
     end,
   },
 })
--- here you can setup the language servers
-require("mason").setup()
-require('mason-lspconfig').setup({
-  ensure_installed = {},
-  handlers = {
-    function(server_name)
-      require('lspconfig')[server_name].setup({})
-    end,
-  },
-})
 
+-- Override hover handler
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+  vim.lsp.handlers.hover, {
+    border = "rounded",
+    focusable = false,
+    position = { col = 0, row = 1 },  -- Below the cursor
+  }
+)
+
+-- Override signature help handler
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+  vim.lsp.handlers.signature_help, {
+    border = "rounded",
+    focusable = false,
+    position = { col = 0, row = 1 },  -- Below the cursor
+  }
+)
+
+-- Autocommands for LSP
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(ev)
     -- Enable completion triggered by <c-x><c-o>
     vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-    -- Buffer local mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
     local opts = { buffer = ev.buf }
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
@@ -89,13 +91,16 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 vim.diagnostic.config({
-	-- update_in_insert = true,
-	float = {
-		focusable = false,
-		style = "minimal",
-		border = "rounded",
-		source = "always",
-		header = "",
-		prefix = "",
-	},
+  float = {
+    focusable = false,
+    style = "minimal",
+    border = "rounded",
+    source = "always",
+    header = "",
+    prefix = "",
+    position = { col = 0, row = 1 },  -- Below the cursor
+  },
 })
+
+-- Add any additional server configurations here if needed
+
