@@ -15,27 +15,6 @@ lspconfig.lua_ls.setup {
     client.offset_encoding = 'utf-16'  -- Set the encoding to match Copilot
   end,
 }
--- Configure the TypeScript/JavaScript language server
-lspconfig.clangd.setup{
-  cmd = {
-    "clangd",
-    "--background-index", -- Enables background indexing of the entire project
-    "--clang-tidy",       -- Use clang-tidy for diagnostics
-    "--compile-commands-dir=build" -- Replace 'build' with your compile_commands.json directory
-  },
-  capabilities = capabilities,
-  on_attach = function(client, bufnr)
-	client.offset_encoding = 'utf-16'
-
-    -- Buffer-specific keybindings (including rename)
-    -- local opts = { buffer = bufnr }
-    -- vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-    -- vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-    -- vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-  end,
-}
-
 -- If you also work with CMake projects, you might want to use the `cmake` language server
 -- lspconfig.cmake.setup{}
 

@@ -31,16 +31,31 @@ require("lazy").setup({
 	-- {"hrsh7th/nvim-cmp"},
 
     -- LSP Config for C/C++ (clangd)
-    {
-        "neovim/nvim-lspconfig",
-        config = function()
-            require("lspconfig").clangd.setup({
-				capabilities = {
-					offsetEncoding = { "utf-8" }
-				}
-			})
-        end
-    },
+
+{
+    "neovim/nvim-lspconfig",
+    config = function()
+        require("lspconfig").clangd.setup({
+            cmd = {
+                "clangd",
+                "--background-index", -- Enables background indexing of the entire project
+                "--clang-tidy",       -- Use clang-tidy for diagnostics
+                -- Remove or update the directory for compile_commands.json as needed
+                -- "--compile-commands-dir=build"
+            },
+            root_dir = require('lspconfig').util.root_pattern("compile_commands.json", ".git"),
+            capabilities = vim.tbl_extend(
+                "force",
+                require("cmp_nvim_lsp").default_capabilities(),
+                { offsetEncoding = { "utf-16" } } -- Ensuring consistent encoding
+            ),
+            on_attach = function(client, bufnr)
+                -- Optional: Any LSP-specific key mappings or settings
+            end,
+        })
+    end
+},
+
     -- Autocompletion
     {
         "hrsh7th/nvim-cmp",
