@@ -17,6 +17,45 @@ require("lazy").setup({
 	{"lewis6991/gitsigns.nvim"},
 	{"m4xshen/autoclose.nvim"},
 	{"nvim-tree/nvim-web-devicons"},
+	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+
+	-- Manage and restore Neovim sessions
+	{
+	  "rmagatti/auto-session",
+	  config = function()
+		vim.o.sessionoptions = "buffers,curdir,folds,help,tabpages,winsize,localoptions"
+		require("auto-session").setup({
+		  log_level = "info",
+		  auto_session_enable_last_session = true,
+		  auto_restore_enabled = true,
+		  auto_session_suppress_dirs = { "~/", "~/Downloads" },
+		})
+	  end,
+	},
+
+	{
+	  "rmagatti/session-lens",
+	  dependencies = "rmagatti/auto-session",
+	},
+
+	-- Switch between projects using Telescope
+	{
+	  "ahmedkhalf/project.nvim",
+	  config = function()
+		require("project_nvim").setup({
+		  manual_mode = false, -- Automatically detect projects
+		  patterns = { ".git",  "Makefile", "package.json" },
+		  detection_methods = { "pattern", "lsp" },
+		})
+	  end,
+	},
+
+	-- Autosave
+	{
+		"brianhuster/autosave.nvim",
+		event="InsertEnter",
+		opts = {} -- Configuration here
+	},
 
 	-- Telescope
 	{
@@ -123,7 +162,7 @@ require("lazy").setup({
 	  config = function()
 		require('lsp_signature').setup({
 		  bind = true,
-		  floating_window = true,
+		  floating_window = false,
 		  hint_enable = false,
 		})
 	  end,

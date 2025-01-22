@@ -22,10 +22,10 @@ vim.keymap.set("i", "<C-d>", "<Esc>")
 
 vim.keymap.set("n", "<leader>F", vim.lsp.buf.format) -- Formats current file using LSP formatting
 
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz") -- Navigates through quickfix lists while
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz") -- keeping the view centered
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz") -- Same for location lists
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+-- vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz") -- Navigates through quickfix lists while
+-- vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz") -- keeping the view centered
+-- vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz") -- Same for location lists
+-- vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]]) -- Search and replace for word unter the cursor across the entire file
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true }) -- Makes current file exexecutable (great for scripts)
@@ -45,11 +45,3 @@ vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 
 -- Custom command to open nvim-tree
 vim.keymap.set('n', '<C-t>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
-
-vim.keymap.set('n', '<leader>ar', function()
-  local word = vim.fn.expand("<cword>")
-  local new_word = vim.fn.input("Replace " .. word .. " with: ")
-  vim.cmd("args **/*")       -- Load all files into the argument list
-  vim.cmd("argdo %s/" .. word .. "/" .. new_word .. "/g | update") -- Replace in all files
-end, { desc = "Replace name globally across all files" })
-
