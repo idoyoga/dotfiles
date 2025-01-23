@@ -41,24 +41,43 @@ local function get_parent_dir()
   return vim.fn.fnamemodify(cwd, ":h") -- ":h" gives the parent directory
 end
 
--- Map keybindings
+-- Find files in the current working directory
 vim.keymap.set('n', '<leader>ff', function()
   builtin.find_files({
     prompt_title = "< Find Files >",
- -- cwd = vim.fn.getcwd(),  -- Restrict to current working directory
-    cwd = get_parent_dir(),  -- Use parent dir as starting point
+	 cwd = vim.fn.getcwd(),  -- Restrict to current working directory
+    -- cwd = get_parent_dir(),  -- Use parent dir as starting point
     hidden = true,          -- Include hidden files
   })
 end, { desc = "Find files in parent directory and subdirectories" })
 
+-- Global search with find files
+vim.keymap.set('n', '<leader>o', function()
+  require('telescope.builtin').find_files({
+    prompt_title = "< Open File >",
+    cwd = vim.fn.input("Path: ", vim.fn.getcwd(), "dir"),
+    hidden = true, -- Include hidden files
+  })
+end, { desc = "Find files in any directory" })
+
+-- Live Grep in the current working directory
 vim.keymap.set('n', '<leader>lg', function()
   builtin.live_grep({
     prompt_title = "< Live Grep >",
- -- cwd = vim.fn.getcwd(),  -- Restrict to current working directory
-    cwd = get_parent_dir(),  -- Use parent dir as starting point
+	 cwd = vim.fn.getcwd(),  -- Restrict to current working directory
+    -- cwd = get_parent_dir(),  -- Use parent dir as starting point
   })
 end, { desc = "Search for text in parent directory and subdirectories" })
 
+-- Global search with Live Grep
+vim.keymap.set('n', '<leader>fg', function()
+  require('telescope.builtin').live_grep({
+    prompt_title = "< Search Content >",
+    cwd = vim.fn.input("Path: ", vim.fn.getcwd(), "dir"),
+  })
+end, { desc = "Search file contents globally" })
+
+-- Find files in git repository
 vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = "Find files in Git repository" })
 
 -- Keybind for workspace symbols
@@ -70,7 +89,8 @@ end, { desc = "Search for workspace symbols using LSP" })
 
 -- Browse code symbols from Treesitter
 vim.keymap.set('n', '<leader>ts', require('telescope.builtin').treesitter, { desc = "Search symbols with Treesitter" })
---
+
+-- Find files using the dropdown theme
 vim.keymap.set('n', '<leader>fd', function()
   require('telescope.builtin').find_files(require('telescope.themes').get_dropdown({
     previewer = false, -- Disable file preview
@@ -78,5 +98,5 @@ vim.keymap.set('n', '<leader>fd', function()
   }))
 end, { desc = "Find files (dropdown theme)" })
 
+-- Find neovim sessions
 vim.keymap.set('n', '<leader>fs', ":Telescope session-lens<CR>", { desc = "Find sessions" })
-

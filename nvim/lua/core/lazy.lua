@@ -26,8 +26,8 @@ require("lazy").setup({
 		vim.o.sessionoptions = "buffers,curdir,folds,help,tabpages,winsize,localoptions"
 		require("auto-session").setup({
 		  log_level = "info",
-		  auto_session_enable_last_session = true,
-		  auto_restore_enabled = true,
+		  auto_session_enable_last_session = false,
+		  auto_restore_enabled = false,
 		  auto_session_suppress_dirs = { "~/", "~/Downloads" },
 		})
 	  end,
@@ -144,16 +144,29 @@ require("lazy").setup({
 
 	-- Nvim Tree
 	{
-		"nvim-tree/nvim-tree.lua",
-		requires = "nvim-tree/nvim-web-devicons",
-		config = function()
-			require("nvim-tree").setup({
-			  sort_by = "case_sensitive",
-			  view = { width = 16 },
-			  renderer = { group_empty = true },
-			  filters = { dotfiles = true },
-			})
-		end
+    "nvim-tree/nvim-tree.lua",
+    requires = "nvim-tree/nvim-web-devicons",
+    config = function()
+        require("nvim-tree").setup({
+            sort_by = "case_sensitive",
+            view = { width = 16 },
+            renderer = {
+                group_empty = true,
+                highlight_opened_files = "none",
+            },
+            filters = {
+                dotfiles = true,
+            },
+            -- actions = {
+            --     change_dir = { enable = true },
+            --     open_file = {
+            --         window_picker = {
+            --             enable = false,
+            --         },
+            --     },
+            -- },
+        })
+    end,
 	},
 
 	-- LSP Signature plugin --
