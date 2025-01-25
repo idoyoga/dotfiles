@@ -6,8 +6,41 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv") -- and re-indents them.
 vim.keymap.set("n", "J", "mzJ`z") -- Joins current line with next one, preserving cursor position
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
+
+-- Move content to the right of the cursor down one line
+vim.keymap.set("n", "<leader>m", function()
+  -- Get the current cursor position
+  local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+
+  -- Get the content of the current line
+  local line = vim.fn.getline(row)
+
+  -- Get the leading whitespace (indentation) of the current line
+  local leading_whitespace = line:match("^%s*")
+
+  -- Split the line at the cursor position
+  local left = line:sub(1, col) -- Content before the cursor
+  local right = line:sub(col + 1) -- Content from the cursor onward
+
+  -- Set the current line with only the left part
+  vim.fn.setline(row, left)
+
+  -- Append the right part as a new line below, with indentation
+  vim.fn.append(row, leading_whitespace .. right)
+
+  -- Move the cursor to the same position in the new line
+  vim.api.nvim_win_set_cursor(0, { row + 1, col })
+end, { desc = "Move content to the right of the cursor down one line" })
+
+-- Add a newline in normal mode  below without moving cursor
+vim.keymap.set('n', '<leader>n', function()
+  vim.api.nvim_buf_set_lines(0, vim.fn.line('.'), vim.fn.line('.'), true, { '' })
+end, { desc = 'Add a newline below without moving' })
+
+-- Add a newline in normal mode above without moving cursor
+vim.keymap.set('n', '<leader>N', function()
+  vim.api.nvim_buf_set_lines(0, vim.fn.line('.') - 1, vim.fn.line('.') - 1, true, { '' })
+end, { desc = 'Add a newline above without moving' })
 
 -- greatest remap ever
 vim.keymap.set("x", "<leader>p", [["_dP]]) -- Pastes over selected text without overwriting def reg

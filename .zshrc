@@ -103,9 +103,10 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ccc='cc -Wall -Wextra -Werror -g'
-alias nvim='nvim'
-alias r='cc && ./a.out'
 alias cf='cc -Werror -Wall -Wextra'
+alias vgf='valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes'
+alias vg='valgrind'
+alias fc='funcheck'
 alias nor='norminette -R CheckForbiddenSourceHeader'
 alias ll='ls -l'
 alias lla='ls -al'
@@ -127,3 +128,14 @@ alias n='nvim'
 alias v='vim'
 alias chr='rm ~/.config/google-chrome/Singleton*'
 alias t='tmux'
+alias s='sudo shutdown -h now'
+alias k='kitty tmux new-session -A -s 0'
+alias ka='tmux kill-server && killall kitty'
+alias mstest="bash /home/dp/42_minishell_tester/tester.sh"
+
+export PATH="$PATH:/home/dp/.brew/bin/gitmux"
+export PATH=$HOME/.local/bin:$PATH
+export PATH=/home/dp/.local/funcheck/host:$PATH
+export TERMINAL=kitty
+export EDITOR=nvim
+

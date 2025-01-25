@@ -151,20 +151,43 @@ require("lazy").setup({
             sort_by = "case_sensitive",
             view = { width = 16 },
             renderer = {
-                group_empty = true,
-                highlight_opened_files = "none",
+                group_empty = true },
+            filters = { dotfiles = true },
+            actions = {
+                change_dir = { enable = true },
+                open_file = {
+                    window_picker = { enable = false },
+                },
             },
-            filters = {
-                dotfiles = true,
-            },
-            -- actions = {
-            --     change_dir = { enable = true },
-            --     open_file = {
-            --         window_picker = {
-            --             enable = false,
-            --         },
-            --     },
-            -- },
+			on_attach = function(bufnr)
+        local api = require("nvim-tree.api")
+
+        local function opts(desc)
+            return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        end
+
+		 -- Default Mappings
+        vim.keymap.set("n", "a", api.fs.create, opts("Create File/Directory"))
+		vim.keymap.set("n", "d", api.fs.remove, opts("Delete File")) -- Delete
+        vim.keymap.set("n", "e", api.fs.rename, opts("Rename File")) -- Rename
+        vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open File"))
+        vim.keymap.set("n", "o", api.node.open.edit, opts("Open File"))
+        vim.keymap.set("n", "q", api.tree.close, opts("Close Tree"))
+        vim.keymap.set("n", "<2-LeftMouse>", api.node.open.edit, opts("Open File (Mouse)"))
+
+        -- Custom Mappings
+        vim.keymap.set("n", "m", api.fs.cut, opts("Cut File"))
+        vim.keymap.set("n", "p", api.fs.paste, opts("Paste File"))
+		vim.keymap.set("n", "c", api.fs.copy.node, opts("Copy File"))
+        vim.keymap.set("n", "Y", function()
+            local node = api.tree.get_node_under_cursor()
+            if node and node.absolute_path then
+                vim.fn.setreg("+", node.absolute_path)
+                vim.notify("Copied: " .. node.absolute_path)
+            else
+                vim.notify("No file selected or path unavailable!", vim.log.levels.WARN)
+            end
+        end, opts("Copy Absolute Path"))    end,
         })
     end,
 	},

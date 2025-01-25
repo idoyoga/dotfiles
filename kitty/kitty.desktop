@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Kitty Terminal
+Exec=kitty sh -c "tmux attach-session -t 0 || tmux new-session -s 0 || bash"
+Terminal=false
+Type=Application
+Icon=/home/dp/.local/kitty.app/share/icons/hicolor/256x256/apps/kitty.png
+Categories=Utility;TerminalEmulator;
