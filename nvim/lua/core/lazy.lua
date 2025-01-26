@@ -3,7 +3,6 @@ require("lazy").setup({
 	-- Various plugins
 	{"mbbill/undotree"},
 	{"tpope/vim-fugitive"},
-	{"nvim-lualine/lualine.nvim"},
 	{"andweeb/presence.nvim"},
 	{"hrsh7th/cmp-nvim-lsp"},
 	{"hrsh7th/cmp-buffer"},
@@ -18,6 +17,11 @@ require("lazy").setup({
 	{"m4xshen/autoclose.nvim"},
 	{"nvim-tree/nvim-web-devicons"},
 	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+
+	{
+	'nvim-lualine/lualine.nvim',
+		dependencies = { 'nvim-tree/nvim-web-devicons' },
+	},
 
 	-- Manage and restore Neovim sessions
 	{
@@ -174,6 +178,7 @@ require("lazy").setup({
         vim.keymap.set("n", "o", api.node.open.edit, opts("Open File"))
         vim.keymap.set("n", "q", api.tree.close, opts("Close Tree"))
         vim.keymap.set("n", "<2-LeftMouse>", api.node.open.edit, opts("Open File (Mouse)"))
+		vim.keymap.set("n", "h", api.tree.toggle_hidden_filter, opts("Toggle Hidden Files")) -- Toggle hidden files
 
         -- Custom Mappings
         vim.keymap.set("n", "m", api.fs.cut, opts("Cut File"))

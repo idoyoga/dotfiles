@@ -100,3 +100,6 @@ end, { desc = "Find files (dropdown theme)" })
 
 -- Find neovim sessions
 vim.keymap.set('n', '<leader>fs', ":Telescope session-lens<CR>", { desc = "Find sessions" })
+
+-- Find references for symbol
+vim.keymap.set('n', '<leader>fr', ":lua vim.lsp.buf.references()<CR>", { desc = "Find references to symbol" })
