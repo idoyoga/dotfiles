@@ -1,175 +1,131 @@
 require("lazy").setup({
 
-	-- Various plugins
-	{"mbbill/undotree"},
-	{"tpope/vim-fugitive"},
-	{"andweeb/presence.nvim"},
-	{"hrsh7th/cmp-nvim-lsp"},
-	{"hrsh7th/cmp-buffer"},
-	{"hrsh7th/cmp-path"},
-	{"saadparwaiz1/cmp_luasnip"},
-	{"L3MON4D3/LuaSnip"},
-	{"rafamadriz/friendly-snippets"},
-	{"Diogo-ss/42-header.nvim"},
-	{"tpope/vim-commentary"},
-	{"christoomey/vim-tmux-navigator"},
-	{"lewis6991/gitsigns.nvim"},
-	{"m4xshen/autoclose.nvim"},
-	{"nvim-tree/nvim-web-devicons"},
+	-- Core utilities
+	{ "mbbill/undotree" },
+	{ "tpope/vim-fugitive" },
+	{ "andweeb/presence.nvim" },
+	{ "Diogo-ss/42-header.nvim" },
+	{ "christoomey/vim-tmux-navigator" },
 	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
-	{
-	'nvim-lualine/lualine.nvim',
-		dependencies = { 'nvim-tree/nvim-web-devicons' },
+	-- Completion & LSP
+	{ "hrsh7th/cmp-nvim-lsp" },
+	{ "hrsh7th/nvim-cmp", dependencies = {"hrsh7th/cmp-nvim-lsp"} },
+	{ "ray-x/lsp_signature.nvim", config = function()
+		require('lsp_signature').setup({ floating_window = false, hint_enable = false })
+	  end
 	},
 
-	-- Manage and restore Neovim sessions
+	-- Productivity
+	{ "lewis6991/gitsigns.nvim" },
+	{ "m4xshen/autoclose.nvim" },
+	{ "folke/zen-mode.nvim", opts = {} },
+	{ "brianhuster/autosave.nvim", event="InsertEnter", opts = {} },
+	{ "rmagatti/auto-session", config = function()
+		require("auto-session").setup({ auto_restore_enabled = false })
+	  end,
+	},
+	{ "ahmedkhalf/project.nvim", config = function()
+		require("project_nvim").setup({ manual_mode = false,
+		  patterns = { ".git", "Makefile" },
+		  detection_methods = { "pattern", "lsp" } })
+	  end,
+	},
+
+	-- LSP setup with clangd
 	{
-	  "rmagatti/auto-session",
+	  "williamboman/mason.nvim",
+	  dependencies = { "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
 	  config = function()
-		vim.o.sessionoptions = "buffers,curdir,folds,help,tabpages,winsize,localoptions"
-		require("auto-session").setup({
-		  log_level = "info",
-		  auto_session_enable_last_session = false,
-		  auto_restore_enabled = false,
-		  auto_session_suppress_dirs = { "~/", "~/Downloads" },
+		require("mason").setup()
+		require("mason-lspconfig").setup({
+		  ensure_installed = { "clangd" },
+		  handlers = {
+			function(server_name)
+			  require("lspconfig")[server_name].setup({
+				capabilities = { offsetEncoding = { "utf-16"} },
+				cmd = { "clangd", "--background-index",	"--clang-tidy", "--compile-commands-dir=build" },
+				root_dir = function(fname)
+				  local util = require("lspconfig.util")
+				  return util.root_pattern("CMakeLists.txt", "compile_commands.json", ".clangd")(fname) or util.path.dirname(fname)
+				end,
+				on_attach = function(_, bufnr)
+				  local opts = { buffer = bufnr, silent = true, noremap = true }
+				  vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
+				  vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+				  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+				end,
+			  })
+			end,
+		  },
 		})
 	  end,
 	},
 
-	{
-	  "rmagatti/session-lens",
-	  dependencies = "rmagatti/auto-session",
-	},
-
-	-- Switch between projects using Telescope
-	{
-	  "ahmedkhalf/project.nvim",
-	  config = function()
-		require("project_nvim").setup({
-		  manual_mode = false, -- Automatically detect projects
-		  patterns = { ".git",  "Makefile", "package.json" },
-		  detection_methods = { "pattern", "lsp" },
-		})
-	  end,
-	},
-
-	-- Autosave
-	{
-		"brianhuster/autosave.nvim",
-		event="InsertEnter",
-		opts = {} -- Configuration here
-	},
-
-	-- Telescope
-	{
-		"nvim-telescope/telescope.nvim",
-		tag = "0.1.5",
-		dependencies = { "nvim-lua/plenary.nvim"},
-	},
-
-	-- Catppuccin Colourscheme
-	{
-		"catppuccin/nvim",
-		name = "catppuccin",
-		priority = 1000
-	},
-
-	-- Treesitter
-	{
-		"nvim-treesitter/nvim-treesitter",
+	-- Treesitter for better syntax highlighting
+	{ "nvim-treesitter/nvim-treesitter",
 		version = "0.9.2",
 		config = function()
         require("nvim-treesitter.configs").setup({
             ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc" },
             highlight = { enable = true },
-			indent = { enable = true },
-			})
+			indent = { enable = true } })
 		end,
 	},
 
-	-- LSP Config
-	{
-    "williamboman/mason.nvim",
-    dependencies = { "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
-    config = function()
-        -- Setup capabilities for LSP, including cmp-nvim-lsp for autocompletion
-        local capabilities = require("cmp_nvim_lsp").default_capabilities()
-        capabilities.offsetEncoding = { "utf-16" } -- Required for clangd
-
-        -- Function to define LSP-specific key mappings
-        local on_attach = function(_, bufnr)
-            local opts = { buffer = bufnr, silent = true, noremap = true }
-            vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts) -- Rename symbol
-            vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)   -- Go to definition
-            vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)         -- Hover documentation
-        end
-
-        -- Mason setup
-        require("mason").setup()
-
-        -- Mason-LSPConfig setup
-        require("mason-lspconfig").setup({
-            ensure_installed = { "clangd" }, -- Install clangd via Mason
-            handlers = {
-                function(server_name)
-                    require("lspconfig")[server_name].setup({
-                        capabilities = capabilities,
-                        on_attach = on_attach,
-						root_dir = require("lspconfig").util.root_pattern("compile_commands.json", ".git"),
-                    })
-                end,
-            },
-        })
-
-        -- Ensure clangd has the correct setup
-        require("lspconfig").clangd.setup({
-            cmd = {
-                "clangd",
-                "--background-index",       -- Enable background indexing
-                "--clang-tidy",             -- Enable clang-tidy diagnostics
-                "--compile-commands-dir=build", -- Set build directory for compile_commands.json
-            },
-			root_dir = function(fname)
-				local util = require("lspconfig.util")
-				return util.root_pattern("compile_commands.json", ".git")(fname) or util.path.dirname(fname)
-			end,
-            capabilities = capabilities,
-            on_attach = on_attach,
-        })
-    end,
+	-- Telescope (Improved Fuzzy Finder)
+	{ "nvim-telescope/telescope.nvim",
+		tag = "0.1.5",
+		dependencies = { "nvim-lua/plenary.nvim"},
 	},
 
-	-- nvim-cmp
-	{
-	"hrsh7th/nvim-cmp",
-	dependencies = {"hrsh7th/cmp-nvim-lsp"},
+	-- Nvim-surround plugin
+	{ "kylechui/nvim-surround",
+		event = "VeryLazy",
+		config = function()
+		  require("nvim-surround").setup({
+			-- Configuration to be implemented soon
+		  })
+		end,
+	  },
+
+	-- Formatting (clangd-format)
+	{ "jose-elias-alvarez/null-ls.nvim",
+	  config = function()
+		local null_ls = require("null-ls")
+		null_ls.setup({ sources = {	null_ls.builtins.formatting.clang_format } })
+	  end,
 	},
 
-	-- Nvim Tree
+
+	-- Lualine (Status Line)
+	{
+	  "nvim-lualine/lualine.nvim",
+		config = function()
+		require("lualine").setup({ options = { theme = "catppuccin" } })
+	  end,
+	},
+
+	-- File Explorer (nvim-tree)
 	{
     "nvim-tree/nvim-tree.lua",
-    requires = "nvim-tree/nvim-web-devicons",
+	dependencies = "nvim-tree/nvim-web-devicons",
     config = function()
         require("nvim-tree").setup({
             sort_by = "case_sensitive",
             view = { width = 16 },
-            renderer = {
-                group_empty = true },
+            renderer = { group_empty = true },
             filters = { dotfiles = true },
             actions = {
-                change_dir = { enable = true },
-                open_file = {
-                    window_picker = { enable = false },
-                },
+				change_dir = { enable = true },
+                open_file = { window_picker = { enable = false } },
             },
-			on_attach = function(bufnr)
+		on_attach = function(bufnr)
         local api = require("nvim-tree.api")
-
         local function opts(desc)
             return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
         end
-
 		 -- Default Mappings
         vim.keymap.set("n", "a", api.fs.create, opts("Create File/Directory"))
 		vim.keymap.set("n", "d", api.fs.remove, opts("Delete File")) -- Delete
@@ -179,7 +135,6 @@ require("lazy").setup({
         vim.keymap.set("n", "q", api.tree.close, opts("Close Tree"))
         vim.keymap.set("n", "<2-LeftMouse>", api.node.open.edit, opts("Open File (Mouse)"))
 		vim.keymap.set("n", "h", api.tree.toggle_hidden_filter, opts("Toggle Hidden Files")) -- Toggle hidden files
-
         -- Custom Mappings
         vim.keymap.set("n", "m", api.fs.cut, opts("Cut File"))
         vim.keymap.set("n", "p", api.fs.paste, opts("Paste File"))
@@ -197,45 +152,18 @@ require("lazy").setup({
     end,
 	},
 
-	-- LSP Signature plugin --
-	{
-	  'ray-x/lsp_signature.nvim',
-	  config = function()
-		require('lsp_signature').setup({
-		  bind = true,
-		  floating_window = false,
-		  hint_enable = false,
-		})
-	  end,
-	},
-
-	-- nvim-surround plugin
-	{
-		"kylechui/nvim-surround",
-		event = "VeryLazy",
+	-- GitHub Copilot
+	{ "github/copilot.vim",
 		config = function()
-		  require("nvim-surround").setup({
-			-- Configuration here, or leave empty to use defaults
-		  })
-		end
-	  },
-
-	-- GitHub Copilot plugin
-	{
-		"github/copilot.vim",
-		config = function()
-			-- Enable Copilot for C and C++
-			vim.g.copilot_filetypes = {
-				['*'] = false, -- Disable for all filetypes by default
-				['c'] = true,  -- Enable for C
-				['cpp'] = true, -- Enable for C++
-			}
-			  -- Make sure Tab is free for Copilot to use
-			vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
-			  expr = true,
-			  replace_keycodes = false
-			})
+			vim.g.copilot_filetypes = { ['*'] = false, ['c'] = true, ['cpp'] = true }
+			vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
 			vim.g.copilot_no_tab_map = true
 		end,
 	},
+
+	-- Optional: Remove if unnecessary
+	-- {"L3MON4D3/LuaSnip"},
+	-- {"saadparwaiz1/cmp_luasnip"},
+	-- {"hrsh7th/cmp-buffer"},
+	-- {"rafamadriz/friendly-snippets"},
 })

@@ -1,6 +1,6 @@
 require("telescope").setup({
   defaults = {
-    file_ignore_patterns = { "node_modules", ".git", "%.o$"},
+    file_ignore_patterns = { "node_modules", ".git", "%.o$", "%.cache$", "%.class$" },
 	layout_strategy = "horizontal",
 	layout_config = { width = 0.9 },
     path_display = { "truncate" },
@@ -23,7 +23,6 @@ require("telescope").setup({
     },
   },
 })
-
 
 -- Speeds up fuzzy matching for large files or directories.
 -- Enables advanced sorting and scoring for search results.

@@ -9,6 +9,15 @@ cmp.setup({
     {name = 'luasnip', keyword_length = 2},
     {name = 'buffer', keyword_length = 3},
   },
+	formatting = {
+    format = function(entry, vim_item)
+      -- Prevent C++ headers in C files
+      if vim.bo.filetype == "c" and entry.completion_item.detail == "cstdlib" then
+        return nil
+      end
+      return vim_item
+    end,
+  },
   mapping = cmp.mapping.preset.insert({
     ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
     ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),

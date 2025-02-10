@@ -43,7 +43,7 @@ vim.keymap.set('n', '<leader>N', function()
 end, { desc = 'Add a newline above without moving' })
 
 -- greatest remap ever
-vim.keymap.set("x", "<leader>p", [["_dP]]) -- Pastes over selected text without overwriting def reg
+vim.keymap.set("x", "<leader>P", [["_dP]]) -- Pastes over selected text without overwriting def reg
 
 -- next greatest remap ever : asbjornHaland
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])  -- Yanks text to sys clipboard in normal
@@ -61,13 +61,10 @@ vim.keymap.set("n", "<leader>F", vim.lsp.buf.format) -- Formats current file usi
 -- vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]]) -- Search and replace for word unter the cursor across the entire file
+
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true }) -- Makes current file exexecutable (great for scripts)
 
-vim.keymap.set(
-	"n",
-	"<leader>ee",
-	"oif err != nil {<CR>}<Esc>Oreturn err<Esc>"
-)
+vim.keymap.set("n", "<leader>ee", "oif err != nil {<CR>}<Esc>Oreturn err<Esc>")
 
 vim.keymap.set("n", "<leader><leader>", function()	-- Reloads current nvim config file
 	vim.cmd("so")
@@ -78,3 +75,17 @@ vim.keymap.set('i', '<C-l>', '<Right>', { noremap = true, silent = true })
 
 -- Custom command to open nvim-tree
 vim.keymap.set('n', '<C-t>', ':NvimTreeToggle<CR>', { noremap = true, silent = true })
+
+-- Pastes the content of the buffer to the next line
+vim.keymap.set("n", "<leader>p", "mz:put =@+<CR>`[v`]=``", { noremap = true, silent = true })
+
+-- Toogle ZenMode
+vim.keymap.set("n", "<leader>z", ":ZenMode<CR>", { noremap = true, silent = true, desc = "Toggle Zen Mode" })
+
+-- Creates undo breakpoint automatically upon typing a new word
+vim.api.nvim_create_autocmd("TextChangedI", {
+    pattern = "*",
+    callback = function()
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-g>u", true, true, true), "n", false)
+    end,
+})

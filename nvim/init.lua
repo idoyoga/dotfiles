@@ -12,6 +12,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = "unnamedplus"
+vim.opt.tags = "./tags,./.tags,./.git/tags,tags"
 
 require ("core")
 require ("core.plugins")
