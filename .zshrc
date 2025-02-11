@@ -128,14 +128,25 @@ alias n='nvim'
 alias v='vim'
 alias chr='rm ~/.config/google-chrome/Singleton*'
 alias t='tmux'
-alias s='sudo shutdown -h now'
+alias 42free='bash /home/dplotzl/.scripts/42free.sh'
 alias k='kitty tmux new-session -A -s 0'
 alias ka='tmux kill-server && killall kitty'
-alias mstest="bash /home/dp/42_minishell_tester/tester.sh"
+alias mstest="bash /home/dplotzl/42_minishell_tester/tester.sh"
 
-export PATH="$PATH:/home/dp/.brew/bin/gitmux"
-export PATH=$HOME/.local/bin:$PATH
-export PATH=/home/dp/.local/funcheck/host:$PATH
+export PATH=/sgoinfre/dplotzl/.brew/bin:$PATH
+export PATH="$HOME/.local/kitty.app/bin:$PATH"
+export PATH=/home/dplotzl/.local/funcheck/host:$PATH
+
 export TERMINAL=kitty
 export EDITOR=nvim
 
+export HOME_MAX_SIZE=5
+export SGOINFRE_MAX_SIZE=30
+export SGOINFRE='/sgoinfre/dplotzl'
+
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/sgoinfre/dplotzl/.brew/opt/nvm/nvm.sh" ] && \. "/sgoinfre/dplotzl/.brew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/sgoinfre/dplotzl/.brew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/sgoinfre/dplotzl/.brew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Starship prompt
+eval "$(starship init zsh)"
