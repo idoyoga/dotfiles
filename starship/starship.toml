@@ -4,49 +4,99 @@ add_newline = true
 # Increase the default command timeout to 2 seconds
 command_timeout = 2000
 
-palette = "catppuccin_macchiato"
-# palette = "catppuccin_mocha"
+#palette = "catppuccin_macchiato"
+palette = "catppuccin_mocha"
 
 # Define the order and format of the information in our prompt
 format = """\
-[](fg:#3B76F0)\
+[[╭─](white)$os](fg:#3B76F0)\
 $directory\
 ${custom.directory_separator_not_git}\
 ${custom.directory_separator_git}\
 $symbol($git_branch[](fg:#FCF392))\
-$symbol( $git_commit$git_status$git_metrics$git_state)$fill$cmd_duration$all\
-${custom.git_config_email}
-$character"""
+$symbol( $git_commit$git_status$git_metrics$git_state)\
+$c\
+$fill\
+$cmd_duration\
+$status\
+$all\
+$line_break\
+[╰─](white)$character"""
+
+[character]
+success_symbol = "[❯](red)[❯](yellow)[❯](green)"
+error_symbol = "[❯](red)[❯](yellow)[❯](green)"
 
 # Fill character (empty space) between the left and right prompt
 [fill]
-symbol = " "
-
-# Disable the line break between the first and second prompt lines
-[line_break]
-disabled = true
+symbol = ""
 
 # Customize the format of the working directory
 [directory]
-truncate_to_repo = true
 format = "[ $path ]($style)"
-style = "fg:text bg:#3B76F0"
+style = "fg:#cdd6f4 bg:#3B76F0"
+truncation_symbol = "󰷏 "
 
 [git_branch]
 symbol = " "
 format = "[ $symbol$branch(:$remote_branch) ]($style)"
 style = "fg:#1C3A5E bg:#FCF392"
+only_attached = true
+ignore_branches = []
+truncation_length = 25
+truncation_symbol = "..."
+always_show_remote = false
+disabled = false
+
+[git_commit]
+style = "fg:text bg: #3B76F0"
+format = "[(( $tag)( @$hash) )]($style)"
+commit_hash_length = 7
+only_detached = true
+tag_symbol = "󰓼 "
+tag_disabled = false
+disabled = false
+
+[git_status]
+style = "fg:#FCF392"
+format = '[($ahead_behind )($all_status )]($style)'
+stashed = "*${count}"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+up_to_date = ""
+diverged = "⇡${ahead_count}⇣${behind_count}"
+conflicted = "=${count}"
+deleted = "×${count}"
+renamed = "»${count}"
+modified = "!${count}"
+staged = "+${count}"
+untracked = "?${count}"
+ignore_submodules = false
+disabled = false
 
 [git_metrics]
+format = '[(([+$added]($added_style))([-$deleted]($deleted_style)) )](fg:#81c8be)'
+added_style = "fg:#a6d189"
+deleted_style = "fg:#e78284"
+only_nonzero_diffs = true
+disabled = false
+
+[git_state]
+style = "fg:#e78284"
+format = '[($state( $progress_current/$progress_total) )]($style bold)'
+rebase = "REBASING"
+merge = "MERGING"
+revert = "REVERTING"
+cherry_pick = "CHERRY-PICKING"
+bisect = "BISECTING"
+am = "AM"
+am_or_rebase = "AM/REBASE"
 disabled = false
 
 [c]
-symbol = "🇨"
-format = "via [$symbol ]($style) "
-
-# [nodejs]
-# format = "via [$symbol($version )]($style)"
-# style = "yellow"
+symbol = ""
+style = "fg:#8aadf4"
+format = '[ $symbol]($style)'
 
 [package]
 disabled = true # Enable to output the current working directory's package version
@@ -70,15 +120,6 @@ full_symbol = '🔋'
 threshold = 10
 style = 'red'
 
-# Output the current git config email address
-# [custom.git_config_email]
-# description = "Output the current git user's configured email address."
-# command = "git config user.email"
-# format = "\n[$symbol(  $output)]($style)"
-# # Only when inside git repository
-# when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
-# style = "text"
-
 # Output a styled separator right after the directory when inside a git repository.
 [custom.directory_separator_git]
 description = "Output a styled separator right after the directory when inside a git repository."
@@ -94,6 +135,24 @@ command = ""
 format = "[](fg:#3B76F0)"
 # Only when NOT inside a git repository
 when = "! git rev-parse --is-inside-work-tree > /dev/null 2>&1"
+
+[status]
+disabled = false
+format = '[( $symbol( $common_meaning)( $signal_name) )]($style)'
+map_symbol = true
+pipestatus = true
+symbol = '󰅙'
+success_symbol = ''
+not_executable_symbol = '󰂭'
+not_found_symbol = '󰍉'
+sigint_symbol = '󰐊'
+signal_symbol = '󱐋'
+style = 'bold fg:#e78284'
+recognize_signal_code = true
+
+# Disable the line break between the first and second prompt lines
+[line_break]
+disabled = false
 
 [palettes.catppuccin_macchiato]
 rosewater = "#f4dbd6"
@@ -150,3 +209,4 @@ surface0 = "#313244"
 base = "#1e1e2e"
 mantle = "#181825"
 crust = "#11111b"
+
