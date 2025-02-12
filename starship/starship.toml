@@ -101,7 +101,7 @@ format = '[$output]($style)'
 [custom.c_icon]
 description = "Display the C icon in a folder with .c files"
 command = "~/.config/starship/c_icon.sh"
-when = "find . -type f -name '*.c' | grep -q ."
+when = "find . -maxdepth 1 -type f -name '*.c' | grep -q ."
 format = "[ $output]($style)"
 style = ""
 
