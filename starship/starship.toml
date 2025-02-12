@@ -33,9 +33,8 @@ symbol = ""
 
 # Customize the format of the working directory
 [directory]
-format = "[ $path ]($style)"
+format = "[󰷏 $path ]($style)"
 style = "fg:#cdd6f4 bg:#3B76F0"
-truncation_symbol = "󰷏 "
 
 [git_branch]
 symbol = " "
@@ -75,7 +74,7 @@ ignore_submodules = false
 disabled = false
 
 [git_metrics]
-format = '[(([+$added]($added_style))([-$deleted]($deleted_style)) )](fg:#81c8be)'
+format = '[(([+$added]($added_style))([-$deleted]($deleted_style)))](fg:#81c8be)'
 added_style = "fg:#a6d189"
 deleted_style = "fg:#e78284"
 only_nonzero_diffs = true
@@ -99,7 +98,7 @@ style = ""
 format = '[$output]($style)'
 
 [custom.c_icon]
-description = "Display the C icon in a folder with .c files"
+description = "Display the C icon when in a folder with .c files"
 command = "~/.config/starship/c_icon.sh"
 when = "find . -maxdepth 1 -type f -name '*.c' | grep -q ."
 format = "[ $output]($style)"

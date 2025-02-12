@@ -8,6 +8,11 @@ require("lazy").setup({
 	{ "christoomey/vim-tmux-navigator" },
 	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+	{
+	  "numToStr/Comment.nvim",
+		opts = { }, 
+		lazy = false,
+	},
 
 	-- Completion & LSP
 	{ "hrsh7th/cmp-nvim-lsp" },
