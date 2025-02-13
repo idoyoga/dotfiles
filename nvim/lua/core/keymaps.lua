@@ -11,28 +11,22 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<leader>m", function()
   -- Get the current cursor position
   local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-
   -- Get the content of the current line
   local line = vim.fn.getline(row)
-
   -- Get the leading whitespace (indentation) of the current line
   local leading_whitespace = line:match("^%s*")
-
   -- Split the line at the cursor position
   local left = line:sub(1, col) -- Content before the cursor
   local right = line:sub(col + 1) -- Content from the cursor onward
-
   -- Set the current line with only the left part
   vim.fn.setline(row, left)
-
   -- Append the right part as a new line below, with indentation
   vim.fn.append(row, leading_whitespace .. right)
-
   -- Move the cursor to the same position in the new line
   vim.api.nvim_win_set_cursor(0, { row + 1, col })
 end, { desc = "Move content to the right of the cursor down one line" })
 
--- Add a newline in normal mode  below without moving cursor
+-- Add a newline in normal mode below without moving cursor
 vim.keymap.set('n', '<leader>n', function()
   vim.api.nvim_buf_set_lines(0, vim.fn.line('.'), vim.fn.line('.'), true, { '' })
 end, { desc = 'Add a newline below without moving' })
@@ -54,6 +48,7 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])	-- Deletes text without overw
 vim.keymap.set("i", "<C-d>", "<Esc>")
 
 vim.keymap.set("n", "<leader>F", vim.lsp.buf.format) -- Formats current file using LSP formatting
+
 
 -- vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz") -- Navigates through quickfix lists while
 -- vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz") -- keeping the view centered
@@ -82,10 +77,13 @@ vim.keymap.set("n", "<leader>p", "mz:put =@+<CR>`[v`]=``", { noremap = true, sil
 -- Toogle ZenMode
 vim.keymap.set("n", "<leader>z", ":ZenMode<CR>", { noremap = true, silent = true, desc = "Toggle Zen Mode" })
 
--- Creates undo breakpoint automatically upon typing a new word
-vim.api.nvim_create_autocmd("TextChangedI", {
-    pattern = "*",
-    callback = function()
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-g>u", true, true, true), "n", false)
-    end,
-})
+-- Paste from system clipboard in normal mode
+vim.keymap.set("n", "p", '"+p', { noremap = true, silent = true })  
+
+-- Paste before the cursor
+vim.keymap.set("n", "P", '"+P', { noremap = true, silent = true })  
+
+
+-- Creates a new line below and pastes from the system clipboard
+vim.keymap.set("n", "gp", "o<Esc>\"+p", { noremap = true, silent = true })
+

@@ -16,8 +16,6 @@ vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
-vim.opt.undolevels = 10000
-vim.opt.undoreload = 10000
 
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
@@ -29,9 +27,19 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
-vim.cmd [[
-  autocmd FileType c setlocal cindent cinoptions=:0,l1,t0,g0,(0
-]]
+vim.opt.hidden = true  -- Allow buffers to be hidden without being saved
+vim.opt.clipboard = "unnamedplus"  -- Use system clipboard by default
+
+vim.opt.undolevels = 10000
+vim.opt.undoreload = 10000
+
+-- Automatically create undo points after these keys
+vim.api.nvim_set_keymap('i', '<Space>', '<Space><C-g>u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '.', '.<C-g>u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', ',', ',<C-g>u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', ';', ';<C-g>u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', ':', ':<C-g>u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<CR>', '<CR><C-g>u', { noremap = true, silent = true })
 
 -- vim.opt.colorcolumn = "80"
 

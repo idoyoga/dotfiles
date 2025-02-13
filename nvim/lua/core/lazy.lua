@@ -8,11 +8,6 @@ require("lazy").setup({
 	{ "christoomey/vim-tmux-navigator" },
 	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
-	{
-	  "numToStr/Comment.nvim",
-		opts = { }, 
-		lazy = false,
-	},
 
 	-- Completion & LSP
 	{ "hrsh7th/cmp-nvim-lsp" },
@@ -48,6 +43,9 @@ require("lazy").setup({
 		  ensure_installed = { "clangd" },
 		  handlers = {
 			function(server_name)
+			 if vim.bo.filetype ~= "c" and vim.bo.filetype ~= "cpp" then
+				return  -- Prevent clangd from attaching to non-C/C++ files
+			  end
 			  require("lspconfig")[server_name].setup({
 				capabilities = { offsetEncoding = { "utf-16"} },
 				cmd = { "clangd", "--background-index",	"--clang-tidy", "--compile-commands-dir=build" },
@@ -94,15 +92,6 @@ require("lazy").setup({
 		  })
 		end,
 	  },
-
-	-- Formatting (clangd-format)
-	{ "jose-elias-alvarez/null-ls.nvim",
-	  config = function()
-		local null_ls = require("null-ls")
-		null_ls.setup({ sources = {	null_ls.builtins.formatting.clang_format } })
-	  end,
-	},
-
 
 	-- Lualine (Status Line)
 	{
