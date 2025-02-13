@@ -41,6 +41,8 @@ vim.api.nvim_set_keymap('i', ';', ';<C-g>u', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', ':', ':<C-g>u', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', '<CR>', '<CR><C-g>u', { noremap = true, silent = true })
 
+vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+
 -- vim.opt.colorcolumn = "80"
 
 -- vim.opt.cursorline = true -- Make current line more apparent

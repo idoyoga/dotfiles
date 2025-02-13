@@ -31,8 +31,13 @@ require("catppuccin").setup({
         -- miscs = {}, -- Uncomment to turn off hard-coded styles
     },
     color_overrides = {},
-    custom_highlights = {},
-    default_integrations = true,
+    custom_highlights = function(colors)
+        return {
+            ["@function.builtin.c"] = { fg = colors.peach },  -- Orange for C library functions
+            ["@constant.macro.c"] = { fg = colors.mauve },    -- Purple for macros
+        }
+    end,   
+     default_integrations = true,
     integrations = {
         cmp = true,
         gitsigns = true,

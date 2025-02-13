@@ -9,19 +9,11 @@ require("lazy").setup({
 	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 	{ "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 
-	-- Completion & LSP
-	{ "hrsh7th/cmp-nvim-lsp" },
-	{ "hrsh7th/nvim-cmp", dependencies = {"hrsh7th/cmp-nvim-lsp"} },
-	{ "ray-x/lsp_signature.nvim", config = function()
-		require('lsp_signature').setup({ floating_window = false, hint_enable = false })
-	  end
-	},
-
 	-- Productivity
+	{ "tpope/vim-commentary" },
 	{ "lewis6991/gitsigns.nvim" },
 	{ "m4xshen/autoclose.nvim" },
 	{ "folke/zen-mode.nvim", opts = {} },
-	{ "brianhuster/autosave.nvim", event="InsertEnter", opts = {} },
 	{ "rmagatti/auto-session", config = function()
 		require("auto-session").setup({ auto_restore_enabled = false })
 	  end,
@@ -32,7 +24,7 @@ require("lazy").setup({
 		  detection_methods = { "pattern", "lsp" } })
 	  end,
 	},
-
+	
 	-- LSP setup with clangd
 	{
 	  "williamboman/mason.nvim",
@@ -43,27 +35,30 @@ require("lazy").setup({
 		  ensure_installed = { "clangd" },
 		  handlers = {
 			function(server_name)
-			 if vim.bo.filetype ~= "c" and vim.bo.filetype ~= "cpp" then
-				return  -- Prevent clangd from attaching to non-C/C++ files
-			  end
 			  require("lspconfig")[server_name].setup({
-				capabilities = { offsetEncoding = { "utf-16"} },
-				cmd = { "clangd", "--background-index",	"--clang-tidy", "--compile-commands-dir=build" },
-				root_dir = function(fname)
-				  local util = require("lspconfig.util")
-				  return util.root_pattern("CMakeLists.txt", "compile_commands.json", ".clangd")(fname) or util.path.dirname(fname)
-				end,
-				on_attach = function(_, bufnr)
+				on_attach = function(client, bufnr)
 				  local opts = { buffer = bufnr, silent = true, noremap = true }
 				  vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
 				  vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 				  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 				end,
+				capabilities = { offsetEncoding = { "utf-16"} },
+				cmd = { "clangd", "--background-index",	"--clang-tidy", "--compile-commands-dir=build" },
+				filetypes = { "c", "cpp" },  -- Ensure clangd runs for C and C++
+                root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
 			  })
 			end,
 		  },
 		})
 	  end,
+	},
+
+	-- Completion & LSP
+	{ "hrsh7th/cmp-nvim-lsp" },
+	{ "hrsh7th/nvim-cmp", dependencies = {"hrsh7th/cmp-nvim-lsp"} },
+	{ "ray-x/lsp_signature.nvim", config = function()
+		require('lsp_signature').setup({ floating_window = false, hint_enable = false })
+	  end
 	},
 
 	-- Treesitter for better syntax highlighting
