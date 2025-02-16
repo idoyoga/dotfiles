@@ -1,8 +1,8 @@
-# Set Zsh as the default shell
-export SHELL=$(which zsh)
-
 # Enable Starship prompt
 eval "$(starship init zsh)"
+
+# Enable colors for ls
+eval "$(dircolors -b)"
 
 # History settings
 HISTFILE=~/.zsh_history
@@ -18,6 +18,7 @@ alias vgf='valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes
 alias vg='valgrind'
 alias fch='funcheck'
 alias nor='norminette -R CheckForbiddenSourceHeader'
+alias ls='ls --color=auto'
 alias ll='ls -l'
 alias lla='ls -al'
 alias c='clear'
@@ -56,5 +57,3 @@ DISABLE_AUTO_TITLE="true"
 
 # Precmd to show current directory in tmux window title
 precmd() { print -Pn "\033]2;$(basename $PWD)\a" }
-
-# eval "$(starship init zsh)"
