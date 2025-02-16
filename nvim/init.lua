@@ -13,6 +13,8 @@ end
 vim.opt.rtp:prepend(lazypath)
 vim.opt.clipboard = "unnamedplus"
 vim.opt.tags = "./tags,./.tags,./.git/tags,tags"
+vim.opt.title = true
+vim.opt.titlestring = "%t"
 
 require ("core")
 require ("core.plugins")
