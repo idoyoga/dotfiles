@@ -83,7 +83,6 @@ vim.keymap.set("n", "p", '"+p', { noremap = true, silent = true })
 -- Paste before the cursor
 vim.keymap.set("n", "P", '"+P', { noremap = true, silent = true })  
 
-
 -- Creates a new line below and pastes from the system clipboard
-vim.keymap.set("n", "gp", "o<Esc>\"+p", { noremap = true, silent = true })
-
+-- vim.keymap.set("n", "gp", "o<Esc>\"+p", { noremap = true, silent = true })
+vim.keymap.set("n", "gp", "o<Esc>\"+p==", { noremap = true, silent = true })

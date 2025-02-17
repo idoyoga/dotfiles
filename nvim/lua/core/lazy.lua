@@ -12,7 +12,6 @@ require("lazy").setup({
 	-- Productivity
 	{ "tpope/vim-commentary" },
 	{ "lewis6991/gitsigns.nvim" },
-	{ "m4xshen/autoclose.nvim" },
 	{ "folke/zen-mode.nvim", opts = {} },
 	{ "rmagatti/auto-session", config = function()
 		require("auto-session").setup({ auto_restore_enabled = false })
@@ -23,6 +22,18 @@ require("lazy").setup({
 		  patterns = { ".git", "Makefile" },
 		  detection_methods = { "pattern", "lsp" } })
 	  end,
+	},
+	{ 
+	  "windwp/nvim-autopairs",
+	  event = "InsertEnter",
+	  config = function()
+		require("nvim-autopairs").setup({
+		  check_ts = true, -- Enable Treesitter integration
+		  enable_check_bracket_line = false, -- Avoids auto-misplacing brackets
+		  ignored_next_char = "[%w%.]", -- Prevents auto-inserting pairs in words
+		  fast_wrap = {},
+		})
+	  end
 	},
 	
 	-- LSP setup with clangd
