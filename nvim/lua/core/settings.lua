@@ -8,11 +8,22 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = false
 
-vim.opt.smartindent = true
+vim.opt.smartindent = false
 vim.opt.autoindent = true
 
-vim.opt.wrap = true
+vim.opt.cindent = true
+vim.opt.cinoptions = ":0,l1,g0,(0,W4"
+-- :0 → Keeps { aligned with else instead of indenting it.
+-- l1 → Ensures labels (like case in switch) are indented correctly.
+-- g0 → Disables extra indentation when inside {}.
+-- (0 → Makes function argument continuation indentation more predictable.
+-- W4 → Controls wrapping indentation.
 
+-- Prevent `{` and `}` from auto-indenting incorrectly
+vim.opt.indentkeys:remove("0{")
+vim.opt.indentkeys:remove("0}")
+
+vim.opt.wrap = true
 vim.opt.swapfile = false
 vim.opt.backup = false
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"

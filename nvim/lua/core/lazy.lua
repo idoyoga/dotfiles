@@ -23,15 +23,26 @@ require("lazy").setup({
 		  detection_methods = { "pattern", "lsp" } })
 	  end,
 	},
-	{ 
+	{
 	  "windwp/nvim-autopairs",
 	  event = "InsertEnter",
 	  config = function()
-		require("nvim-autopairs").setup({
+		local npairs = require("nvim-autopairs")
+
+		npairs.setup({
 		  check_ts = true, -- Enable Treesitter integration
 		  enable_check_bracket_line = false, -- Avoids auto-misplacing brackets
 		  ignored_next_char = "[%w%.]", -- Prevents auto-inserting pairs in words
 		  fast_wrap = {},
+		})
+
+		-- Add specific rules for C
+		local Rule = require("nvim-autopairs.rule")
+		npairs.add_rules({
+		  Rule("{", "}", "c"):with_pair(function(opts)
+			local prev_char = opts.line:sub(opts.col - 1, opts.col - 1)
+			return prev_char:match("[%s%(%{%[]") ~= nil
+		  end),
 		})
 	  end
 	},
