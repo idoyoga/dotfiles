@@ -19,10 +19,6 @@ vim.opt.cinoptions = ":0,l1,g0,(0,W4"
 -- (0 → Makes function argument continuation indentation more predictable.
 -- W4 → Controls wrapping indentation.
 
--- Prevent `{` and `}` from auto-indenting incorrectly
-vim.opt.indentkeys:remove("0{")
-vim.opt.indentkeys:remove("0}")
-
 vim.opt.wrap = true
 vim.opt.swapfile = false
 vim.opt.backup = false

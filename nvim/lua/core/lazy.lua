@@ -36,16 +36,29 @@ require("lazy").setup({
 		  fast_wrap = {},
 		})
 
-		-- Add specific rules for C
 		local Rule = require("nvim-autopairs.rule")
+
+		-- Remove conflicting default rules for `{`
+		npairs.clear_rules("{")
+
+		-- Add custom rule to ensure correct `{}` indentation in C
 		npairs.add_rules({
-		  Rule("{", "}", "c"):with_pair(function(opts)
-			local prev_char = opts.line:sub(opts.col - 1, opts.col - 1)
-			return prev_char:match("[%s%(%{%[]") ~= nil
-		  end),
+		  Rule("{", "}", "c")
+			:with_pair(function(opts)
+			  local prev_char = opts.line:sub(opts.col - 1, opts.col - 1)
+			  return prev_char:match("[%s%(%{%[]") ~= nil
+			end)
+			:with_move(function(opts)
+			  return opts.char == "}"
+			end)
+			:with_cr(function()
+			  return true  -- Ensures `{}` is properly formatted when pressing Enter
+			end)
+			:use_key("{"),
 		})
 	  end
-	},
+	}
+	,
 	
 	-- LSP setup with clangd
 	{
