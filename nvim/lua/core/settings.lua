@@ -12,7 +12,7 @@ vim.opt.smartindent = false
 vim.opt.autoindent = true
 
 vim.opt.cindent = true
-vim.opt.cinoptions = ":0,l1,g0,(0,W4"
+vim.opt.cinoptions = ":0,l1,g0,(0,W4,E0"
 -- :0 → Keeps { aligned with else instead of indenting it.
 -- l1 → Ensures labels (like case in switch) are indented correctly.
 -- g0 → Disables extra indentation when inside {}.

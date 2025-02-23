@@ -23,8 +23,7 @@ require("lazy").setup({
 		  detection_methods = { "pattern", "lsp" } })
 	  end,
 	},
-	{
-	  "windwp/nvim-autopairs",
+	{ "windwp/nvim-autopairs",
 	  event = "InsertEnter",
 	  config = function()
 		local npairs = require("nvim-autopairs")
@@ -78,9 +77,16 @@ require("lazy").setup({
 				  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 				end,
 				capabilities = { offsetEncoding = { "utf-16"} },
-				cmd = { "clangd", "--background-index",	"--clang-tidy", "--compile-commands-dir=build" },
+				cmd = { 
+				"clangd",
+				"--background-index",
+				"--clang-tidy",
+				"--compile-commands-dir=" .. vim.fn.getcwd(), -- Ensure it points to the correct dir
+				"--fallback-style=LLVM" -- Ensures a default formatting style
+				},
 				filetypes = { "c", "cpp" },  -- Ensure clangd runs for C and C++
                 root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
+				flags = { allow_incremental_sync = false },
 			  })
 			end,
 		  },
