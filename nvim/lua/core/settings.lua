@@ -36,7 +36,7 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 
 vim.opt.hidden = true  -- Allow buffers to be hidden without being saved
-vim.opt.clipboard = "unnamedplus"  -- Use system clipboard by default
+-- vim.opt.clipboard = "unnamedplus"  -- Use system clipboard by default
 
 vim.opt.undolevels = 10000
 vim.opt.undoreload = 10000
@@ -54,3 +54,9 @@ vim.o.sessionoptions="blank,buffers,curdir,folds,help,tabpages,winsize,winpos,te
 -- vim.opt.colorcolumn = "80"
 
 -- vim.opt.cursorline = true -- Make current line more apparent
+
+-- Remove trailing spaces
+vim.api.nvim_create_autocmd("BufWritePre", {
+    pattern = "*",
+    command = "%s/\\s\\+$//e",
+})

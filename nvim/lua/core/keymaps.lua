@@ -86,3 +86,19 @@ vim.keymap.set("n", "P", '"+P', { noremap = true, silent = true })
 -- Creates a new line below and pastes from the system clipboard
 -- vim.keymap.set("n", "gp", "o<Esc>\"+p", { noremap = true, silent = true })
 vim.keymap.set("n", "gp", "o<Esc>\"+p==", { noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>tc", function()
+    if vim.g.copilot_enabled == nil then
+        vim.g.copilot_enabled = true
+    end
+
+    if vim.g.copilot_enabled then
+        vim.cmd("Copilot disable")
+        print("Copilot Disabled")
+    else
+        vim.cmd("Copilot enable")
+        print("Copilot Enabled")
+    end
+
+    vim.g.copilot_enabled = not vim.g.copilot_enabled
+end, { noremap = true, silent = true, desc = "Toggle GitHub Copilot" })

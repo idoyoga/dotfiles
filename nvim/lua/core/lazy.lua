@@ -25,39 +25,8 @@ require("lazy").setup({
 	},
 	{ "windwp/nvim-autopairs",
 	  event = "InsertEnter",
-	  config = function()
-		local npairs = require("nvim-autopairs")
-
-		npairs.setup({
-		  check_ts = true, -- Enable Treesitter integration
-		  enable_check_bracket_line = false, -- Avoids auto-misplacing brackets
-		  ignored_next_char = "[%w%.]", -- Prevents auto-inserting pairs in words
-		  fast_wrap = {},
-		})
-
-		local Rule = require("nvim-autopairs.rule")
-
-		-- Remove conflicting default rules for `{`
-		npairs.clear_rules("{")
-
-		-- Add custom rule to ensure correct `{}` indentation in C
-		npairs.add_rules({
-		  Rule("{", "}", "c")
-			:with_pair(function(opts)
-			  local prev_char = opts.line:sub(opts.col - 1, opts.col - 1)
-			  return prev_char:match("[%s%(%{%[]") ~= nil
-			end)
-			:with_move(function(opts)
-			  return opts.char == "}"
-			end)
-			:with_cr(function()
-			  return true  -- Ensures `{}` is properly formatted when pressing Enter
-			end)
-			:use_key("{"),
-		})
-	  end
-	}
-	,
+	  config = true 
+	},
 	
 	-- LSP setup with clangd
 	{
@@ -82,7 +51,9 @@ require("lazy").setup({
 				"--background-index",
 				"--clang-tidy",
 				"--compile-commands-dir=" .. vim.fn.getcwd(), -- Ensure it points to the correct dir
-				"--fallback-style=LLVM" -- Ensures a default formatting style
+				"--fallback-style=LLVM", -- Ensures a default formatting style
+				"--header-insertion=never",  -- Prevents automatic header insertion
+				"--completion-style=detailed", -- Improves symbol recognition
 				},
 				filetypes = { "c", "cpp" },  -- Ensure clangd runs for C and C++
                 root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
@@ -197,3 +168,30 @@ require("lazy").setup({
 	-- {"hrsh7th/cmp-buffer"},
 	-- {"rafamadriz/friendly-snippets"},
 })
+
+local update_file = vim.fn.stdpath("data") .. "/lazy_update_timestamp"
+
+local function should_update_lazy()
+    -- Ensure the file exists before reading it
+    if vim.fn.filereadable(update_file) == 0 then
+        vim.fn.writefile({ "0" }, update_file) -- Create the file if missing
+    end
+
+    local last_update = tonumber(vim.fn.readfile(update_file)[1] or "0")
+    local current_time = os.time()
+    local one_day = 86400 -- Seconds in a day
+
+    return (current_time - last_update > one_day)
+end
+
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        if should_update_lazy() then
+            vim.defer_fn(function()
+                vim.cmd("Lazy update")
+                vim.fn.writefile({ tostring(os.time()) }, update_file) -- Save timestamp
+            end, 500) -- Runs after 500ms to avoid slowing startup
+        end
+    end,
+})
+
