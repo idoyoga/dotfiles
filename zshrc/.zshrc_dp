@@ -1,0 +1,62 @@
+# Enable Starship prompt
+eval "$(starship init zsh)"
+
+# Enable colors for ls
+eval "$(dircolors -b)"
+
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+setopt sharehistory
+
+# Aliases
+alias ccc='cc -Wall -Wextra -Werror -g'
+alias cf='cc -Werror -Wall -Wextra'
+alias vgf='valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --track-fds=yes --track-origins=yes --show-mismatched-free=yes'
+alias vg='valgrind'
+alias wd='sudo sg_raw -s 40 -i ~/.config/WD-Decrypte/pw.bin /dev/sda c1 e1 00 00 00 00 00 00 28 00'
+alias fch='funcheck'
+alias nor='norminette -R CheckForbiddenSourceHeader'
+alias ls='ls -h --color=auto'
+alias ll='ls -l'
+alias lla='ls -al'
+alias c='clear'
+alias gst='git status'
+alias gp='git push'
+alias gl='git log'
+alias gc='git commit -m'
+alias ga='git add .'
+alias gac='git add . && cz c'
+alias gf='git fetch --all --prune'
+alias gpl='git pull'
+alias gcl='git clone'
+alias gch='git checkout'
+alias gb='git branch'
+alias gr='git remote'
+alias gsw='git switch'
+alias n='nvim'
+alias v='vim'
+alias t='tmux'
+alias s='sudo shutdown -h now'
+alias rb='sudo reboot'
+alias r='ranger'
+alias u='sudo apt update && sudo apt upgrade'
+alias k='kitty tmux new-session -A -s 0'
+alias ka='tmux kill-server && killall kitty'
+alias sz='source ~/.zshrc'
+
+# Environment variables
+export PATH=$HOME/.brew/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
+export PATH="$PATH:/home/dp/.local/bin"
+export PATH=/home/dp/.local/funcheck/host:$PATH
+export TERMINAL=kitty
+export EDITOR=nvim
+
+# Disable Zsh title handling
+DISABLE_AUTO_TITLE="true"
+
+# Precmd to show current directory in tmux window title
+precmd() { print -Pn "\033]2;$(basename $PWD)\a" }
