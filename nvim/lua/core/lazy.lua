@@ -25,9 +25,9 @@ require("lazy").setup({
 	},
 	{ "windwp/nvim-autopairs",
 	  event = "InsertEnter",
-	  config = true 
+	  config = true
 	},
-	
+
 	-- LSP setup with clangd
 	{
 	  "williamboman/mason.nvim",
@@ -35,32 +35,8 @@ require("lazy").setup({
 	  config = function()
 		require("mason").setup()
 		require("mason-lspconfig").setup({
-		  ensure_installed = { "clangd" },
-		  handlers = {
-			function(server_name)
-			  require("lspconfig")[server_name].setup({
-				on_attach = function(client, bufnr)
-				  local opts = { buffer = bufnr, silent = true, noremap = true }
-				  vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
-				  vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-				  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-				end,
-				capabilities = { offsetEncoding = { "utf-16"} },
-				cmd = { 
-				"clangd",
-				"--background-index",
-				"--clang-tidy",
-				"--compile-commands-dir=" .. vim.fn.getcwd(), -- Ensure it points to the correct dir
-				"--fallback-style=LLVM", -- Ensures a default formatting style
-				"--header-insertion=never",  -- Prevents automatic header insertion
-				"--completion-style=detailed", -- Improves symbol recognition
-				},
-				filetypes = { "c", "cpp" },  -- Ensure clangd runs for C and C++
-                root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
-				flags = { allow_incremental_sync = false },
-			  })
-			end,
-		  },
+		  automatic_installation = false, -- disables implicit LSP auto-config
+		  handlers = {}, -- disables mason-lspconfig handlers entirely
 		})
 	  end,
 	},
@@ -75,7 +51,7 @@ require("lazy").setup({
 
 	-- Treesitter for better syntax highlighting
 	{ "nvim-treesitter/nvim-treesitter",
-		version = "0.9.2",
+		-- version = "0.9.2",
 		config = function()
         require("nvim-treesitter.configs").setup({
             ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc" },
@@ -169,6 +145,77 @@ require("lazy").setup({
 	-- {"rafamadriz/friendly-snippets"},
 })
 
+-- Manual clangd setup (bypasses mason-lspconfig)
+require("lspconfig").clangd.setup({
+on_attach = function(client, bufnr)
+  print("LSP attached to buffer:", bufnr)
+  local opts = { buffer = bufnr, silent = true, noremap = true }
+
+  -- Disable inlay hints if supported
+  if vim.lsp.buf.inlay_hint then
+    vim.lsp.buf.inlay_hint(bufnr, false)
+  end
+
+  -- Smart rename
+  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+
+  -- Smart go-to-definition
+  vim.keymap.set("n", "<leader>gd", function()
+    local params = vim.lsp.util.make_position_params(0, "utf-16")
+    vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result)
+      if err or not result or vim.tbl_isempty(result) then
+        vim.notify("Definition not found", vim.log.levels.WARN)
+        return
+      end
+      if #result == 1 then
+        vim.lsp.util.jump_to_location(result[1], "utf-16")
+      else
+        vim.fn.setqflist({}, ' ', {
+          title = 'LSP Definitions',
+          items = vim.lsp.util.locations_to_items(result, "utf-16"),
+        })
+        vim.cmd("copen")
+      end
+    end)
+  end, opts)
+
+  -- Hover
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+end,
+  capabilities = { offsetEncoding = { "utf-16" } },
+
+  cmd = {
+    "clangd",
+    "--background-index",
+    "--clang-tidy",
+    "--compile-commands-dir=" .. vim.fn.getcwd() .. "/build",
+    "--fallback-style=LLVM",
+    "--header-insertion=never",
+    "--completion-style=detailed",
+  },
+
+  filetypes = { "c", "cpp" },
+  root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
+  flags = { allow_incremental_sync = false },
+	init_options = {
+	  clangdFileStatus = false,  -- disables extra status in command area
+	  inlayHints = false,        -- disables inlay hints (parameter info)
+	},
+})
+
+-- 🔧 Configure diagnostics globally (error signs, virtual text, etc.)
+vim.diagnostic.config({
+  virtual_text = true,   -- inline text for errors/warnings
+  signs = true,          -- show E, W, etc. in the sign column
+  underline = true,      -- underline problem text
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    border = "rounded",
+    source = "always",
+  },
+})
+
 local update_file = vim.fn.stdpath("data") .. "/lazy_update_timestamp"
 
 local function should_update_lazy()
@@ -194,4 +241,3 @@ vim.api.nvim_create_autocmd("VimEnter", {
         end
     end,
 })
-

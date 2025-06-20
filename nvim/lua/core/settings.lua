@@ -60,3 +60,10 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     pattern = "*",
     command = "%s/\\s\\+$//e",
 })
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    if vim.lsp.buf.inlay_hint then
+      vim.lsp.buf.inlay_hint(args.buf, false)
+    end
+  end,
+})
