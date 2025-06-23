@@ -36,7 +36,10 @@ require("lazy").setup({
 		require("mason").setup()
 		require("mason-lspconfig").setup({
 		  automatic_installation = false, -- disables implicit LSP auto-config
-		  handlers = {}, -- disables mason-lspconfig handlers entirely
+		  handlers = {
+			-- prevent auto-setup for clangd entirely
+				["clangd"] = function() end,
+				}, -- disables mason-lspconfig handlers entirely
 		})
 	  end,
 	},
@@ -148,6 +151,13 @@ require("lazy").setup({
 -- Manual clangd setup (bypasses mason-lspconfig)
 require("lspconfig").clangd.setup({
 on_attach = function(client, bufnr)
+  -- Kill all other clangd clients except this one
+  for _, other_client in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+    if other_client.name == "clangd" and other_client.id ~= client.id then
+      vim.lsp.stop_client(other_client.id)
+    end
+  end
+
   print("LSP attached to buffer:", bufnr)
   local opts = { buffer = bufnr, silent = true, noremap = true }
 
