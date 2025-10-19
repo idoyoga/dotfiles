@@ -29,6 +29,37 @@ require("lazy").setup({
 	},
 
 	-- LSP setup with clangd
+
+-- 	-- Mason core
+-- 	{ "williamboman/mason.nvim", config = true },
+
+-- 	-- Mason–LSP bridge (separate entry!)
+-- 	{
+-- 	  "williamboman/mason-lspconfig.nvim",
+-- 	  dependencies = { "neovim/nvim-lspconfig" },
+-- 	  config = function()
+-- 		require("mason-lspconfig").setup({
+-- 		  automatic_installation = false,
+-- 		})
+
+-- 		-- Modern handler registration (v2+ API)
+-- 		require("mason-lspconfig").setup_handlers({
+-- 		  function(server_name)
+-- 			vim.lsp.enable(server_name, {
+-- 			  capabilities = require("cmp_nvim_lsp").default_capabilities(),
+-- 			  on_attach = function(_, bufnr)
+-- 				local opts = { buffer = bufnr, silent = true, noremap = true }
+-- 				vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+-- 				vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+-- 				vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, opts)
+-- 			  end,
+-- 			})
+-- 		  end,
+-- 		  ["clangd"] = function() end,
+-- 		})
+-- 	  end,
+-- 	},
+
 	{
 	  "williamboman/mason.nvim",
 	  dependencies = { "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
@@ -148,70 +179,136 @@ require("lazy").setup({
 	-- {"rafamadriz/friendly-snippets"},
 })
 
--- Manual clangd setup (bypasses mason-lspconfig)
-require("lspconfig").clangd.setup({
-on_attach = function(client, bufnr)
-  -- Kill all other clangd clients except this one
-  for _, other_client in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
-    if other_client.name == "clangd" and other_client.id ~= client.id then
-      vim.lsp.stop_client(other_client.id)
-    end
-  end
+-- Manual clangd setup (modern API, Neovim 0.11+)
+vim.lsp.config('clangd', {
+	on_attach = function(client, bufnr)
+		-- Kill all other clangd clients except this one
+		for _, other_client in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+			if other_client.name == "clangd" and other_client.id ~= client.id then
+				vim.lsp.stop_client(other_client.id)
+			end
+		end
 
-  print("LSP attached to buffer:", bufnr)
-  local opts = { buffer = bufnr, silent = true, noremap = true }
+		print("LSP attached to buffer:", bufnr)
+		local opts = { buffer = bufnr, silent = true, noremap = true }
 
-  -- Disable inlay hints if supported
-  if vim.lsp.buf.inlay_hint then
-    vim.lsp.buf.inlay_hint(bufnr, false)
-  end
+		-- Disable inlay hints if supported
+		if vim.lsp.buf.inlay_hint then
+			vim.lsp.buf.inlay_hint(bufnr, false)
+		end
 
-  -- Smart rename
-  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+		-- Smart rename
+		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
 
-  -- Smart go-to-definition
-  vim.keymap.set("n", "<leader>gd", function()
-    local params = vim.lsp.util.make_position_params(0, "utf-16")
-    vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result)
-      if err or not result or vim.tbl_isempty(result) then
-        vim.notify("Definition not found", vim.log.levels.WARN)
-        return
-      end
-      if #result == 1 then
-        vim.lsp.util.jump_to_location(result[1], "utf-16")
-      else
-        vim.fn.setqflist({}, ' ', {
-          title = 'LSP Definitions',
-          items = vim.lsp.util.locations_to_items(result, "utf-16"),
-        })
-        vim.cmd("copen")
-      end
-    end)
-  end, opts)
+		-- Smart go-to-definition
+		vim.keymap.set("n", "<leader>gd", function()
+			local params = vim.lsp.util.make_position_params(0, "utf-16")
+			vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result)
+				if err or not result or vim.tbl_isempty(result) then
+					vim.notify("Definition not found", vim.log.levels.WARN)
+					return
+				end
+				if #result == 1 then
+					vim.lsp.util.jump_to_location(result[1], "utf-16")
+				else
+					vim.fn.setqflist({}, ' ', {
+						title = 'LSP Definitions',
+						items = vim.lsp.util.locations_to_items(result, "utf-16"),
+					})
+					vim.cmd("copen")
+				end
+			end)
+		end, opts)
 
-  -- Hover
-  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-end,
-  capabilities = { offsetEncoding = { "utf-16" } },
+		-- Hover
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+	end,
 
-  cmd = {
-    "clangd",
-    "--background-index",
-    "--clang-tidy",
-    "--compile-commands-dir=" .. vim.fn.getcwd() .. "/build",
-    "--fallback-style=LLVM",
-    "--header-insertion=never",
-    "--completion-style=detailed",
-  },
+	capabilities = { offsetEncoding = { "utf-16" } },
 
-  filetypes = { "c", "cpp" },
-  root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
-  flags = { allow_incremental_sync = false },
+	cmd = {
+		"clangd",
+		"--background-index",
+		"--clang-tidy",
+		"--compile-commands-dir=" .. vim.fn.getcwd() .. "/build",
+		"--fallback-style=LLVM",
+		"--header-insertion=never",
+		"--completion-style=detailed",
+	},
+
+	filetypes = { "c", "cpp" },
+	root_dir = vim.fs.dirname(vim.fs.find({ "compile_commands.json", ".git" }, { upward = true })[1]),
+	flags = { allow_incremental_sync = false },
 	init_options = {
-	  clangdFileStatus = false,  -- disables extra status in command area
-	  inlayHints = false,        -- disables inlay hints (parameter info)
+		clangdFileStatus = false,
+		inlayHints = false,
 	},
 })
+
+-- -- Manual clangd setup (bypasses mason-lspconfig)
+-- require("lspconfig").clangd.setup({
+-- on_attach = function(client, bufnr)
+--   -- Kill all other clangd clients except this one
+--   for _, other_client in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+--     if other_client.name == "clangd" and other_client.id ~= client.id then
+--       vim.lsp.stop_client(other_client.id)
+--     end
+--   end
+
+--   print("LSP attached to buffer:", bufnr)
+--   local opts = { buffer = bufnr, silent = true, noremap = true }
+
+--   -- Disable inlay hints if supported
+--   if vim.lsp.buf.inlay_hint then
+--     vim.lsp.buf.inlay_hint(bufnr, false)
+--   end
+
+--   -- Smart rename
+--   vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+
+--   -- Smart go-to-definition
+--   vim.keymap.set("n", "<leader>gd", function()
+--     local params = vim.lsp.util.make_position_params(0, "utf-16")
+--     vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result)
+--       if err or not result or vim.tbl_isempty(result) then
+--         vim.notify("Definition not found", vim.log.levels.WARN)
+--         return
+--       end
+--       if #result == 1 then
+--         vim.lsp.util.jump_to_location(result[1], "utf-16")
+--       else
+--         vim.fn.setqflist({}, ' ', {
+--           title = 'LSP Definitions',
+--           items = vim.lsp.util.locations_to_items(result, "utf-16"),
+--         })
+--         vim.cmd("copen")
+--       end
+--     end)
+--   end, opts)
+
+--   -- Hover
+--   vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+-- end,
+--   capabilities = { offsetEncoding = { "utf-16" } },
+
+--   cmd = {
+--     "clangd",
+--     "--background-index",
+--     "--clang-tidy",
+--     "--compile-commands-dir=" .. vim.fn.getcwd() .. "/build",
+--     "--fallback-style=LLVM",
+--     "--header-insertion=never",
+--     "--completion-style=detailed",
+--   },
+
+--   filetypes = { "c", "cpp" },
+--   root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
+--   flags = { allow_incremental_sync = false },
+-- 	init_options = {
+-- 	  clangdFileStatus = false,  -- disables extra status in command area
+-- 	  inlayHints = false,        -- disables inlay hints (parameter info)
+-- 	},
+-- })
 
 -- 🔧 Configure diagnostics globally (error signs, virtual text, etc.)
 vim.diagnostic.config({
