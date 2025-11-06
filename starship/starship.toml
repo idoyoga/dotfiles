@@ -36,6 +36,16 @@ symbol = ""
 format = "[󰷏 $path ]($style)"
 style = "fg:#cdd6f4 bg:#3B76F0"
 
+[username]
+format = "[ $user]($style)"
+style_user = "bold fg:#89b4fa"
+show_always = true
+
+[hostname]
+format = "[ 🌐 $hostname ]($style)"
+style = "fg:#fab387"
+ssh_only = false
+
 [git_branch]
 symbol = " "
 format = "[ $symbol$branch(:$remote_branch) ]($style)"
