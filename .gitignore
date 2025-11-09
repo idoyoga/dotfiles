@@ -1,0 +1,39 @@
+# Syncthing metadata
+.stfolder/
+.sync-conflict-*/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor caches and swap files
+*.swp
+*.swo
+*.tmp
+*~
+
+# Machine-specific overrides
+.zshrc.local
+*.local
+*.bak
+
+# Log or history files
+*.log
+*.history
+
+# Neovim session and LSP stuff
+.config/nvim/.netrwhist
+.config/nvim/.DS_Store
+.config/nvim/Session.vim
+.config/nvim/swap/
+.config/nvim/undo/
+.config/nvim/backup/
+
+# VSCode or JetBrains
+.vscode/
+.idea/
+
+# Optional: Git credentials, SSH keys, or machine IDs
+.ssh/
+.gnupg/
+
