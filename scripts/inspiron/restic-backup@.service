@@ -1,0 +1,16 @@
+[Unit]
+Description=Restic backup triggered by external HDD (UUID=%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/restic-system-backup.sh
+StandardOutput=append:/var/log/restic-udev.log
+StandardError=append:/var/log/restic-udev.log
+TimeoutStartSec=86400   # 24h max runtime
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=multi-user.target

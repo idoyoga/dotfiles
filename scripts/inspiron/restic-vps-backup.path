@@ -1,0 +1,8 @@
+[Unit]
+Description=Run VPS backup when external HDD is mounted (this file is in /etc/systemd/system/restic-vps-backup.path)
+
+[Path]
+PathExists=/media/veracrypt1
+
+[Install]
+WantedBy=multi-user.target

@@ -44,9 +44,12 @@ alias ka='tmux kill-server && killall kitty'
 alias sz='source ~/.zshrc'
 
 alias tsu='sudo tailscale up'
+alias tsd='sudo tailscale down'
 alias tss='tailscale status'
 alias vcu='sudo veracrypt -d /mnt/veracrypt/syncthing'
 alias se='sudoedit'
+alias vpn-on='sudo tailscale up --exit-node=100.65.0.7 --exit-node-allow-lan-access=true --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
+alias vpn-off='sudo tailscale up --exit-node= --exit-node-allow-lan-access=false --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
 
 # Headscale shortcuts
 alias hs='sudo docker exec -it headscale headscale'
@@ -73,3 +76,23 @@ precmd() { print -Pn "\033]2;$(basename $PWD)\a" }
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+case "$(hostname)" in
+  vps)
+    export PATH="/mnt/veracrypt/syncthing/dotfiles/scripts/vps:$PATH"
+    ;;
+  inspiron*)
+    export PATH="$HOME/Documents/dotfiles/scripts/inspiron:$PATH"
+    ;;
+  thinkpad*)
+    export PATH="$HOME/Documents/dotfiles/scripts/thinkpad:$PATH"
+    ;;
+  *)
+    export PATH="$HOME/Documents/dotfiles/scripts/common:$PATH"
+    ;;
+esac
+
+# Host-specific overrides
+if [ -f ~/.zshrc.local ]; then
+  source ~/.zshrc.local
+fi

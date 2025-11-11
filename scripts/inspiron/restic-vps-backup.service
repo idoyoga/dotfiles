@@ -1,0 +1,7 @@
+[Unit]
+Description=Trigger VPS Restic backup when external HDD is connected
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/restic-trigger-vps-backup.sh

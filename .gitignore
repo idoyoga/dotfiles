@@ -1,6 +1,6 @@
 # Syncthing metadata
 .stfolder/
-.sync-conflict-*/
+*.sync-conflict-*/
 
 # secrets
 /mnt/veracrypt/syncthing/secrets/
