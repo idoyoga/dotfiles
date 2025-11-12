@@ -57,6 +57,11 @@ alias hslist='hs nodes list'
 alias hslogs='sudo docker logs headscale --tail 50'
 alias hsapprove='hs nodes approve-routes -i'
 
+# Restic shortcuts for vps
+alias rcheck='sudo restic -r sftp:dp@100.65.0.2:/media/veracrypt1/Backup/01_System_Backups/Restic_vps --password-file /etc/restic/restic-pass.txt check'
+alias rstats='sudo restic -r sftp:dp@100.65.0.2:/media/veracrypt1/Backup/01_System_Backups/Restic_vps --password-file /etc/restic/restic-pass.txt stats'
+alias rsnap='sudo restic -r sftp:dp@100.65.0.2:/media/veracrypt1/Backup/01_System_Backups/Restic_vps --password-file /etc/restic/restic-pass.txt snapshots'
+
 # Environment variables
 export PATH="$HOME/mnt/veracrypt/syncthing/dotfiles/vps_scripts:$PATH"
 export PATH="/usr/local/bin:$PATH"

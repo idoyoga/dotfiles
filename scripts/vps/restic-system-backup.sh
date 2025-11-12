@@ -15,14 +15,28 @@ if [ ! -f "$SECRETS_FILE" ]; then
     echo "==== $DATE Secrets file not found ($SECRETS_FILE). Is VeraCrypt mounted? ====" | tee -a "$LOGFILE"
     exit 1
 fi
+
 # shellcheck disable=SC1090
+set -a                     # automatically export all sourced vars
 source "$SECRETS_FILE"
+set +a                     # stop auto-exporting
+
+if [ -z "$RESTIC_REPOSITORY" ]; then
+    echo "==== $DATE ERROR: RESTIC_REPOSITORY not loaded. Check $SECRETS_FILE permissions or VeraCrypt mount. ====" | tee -a "$LOGFILE"
+    exit 1
+fi
+
+echo "==== Using repository: $RESTIC_REPOSITORY ====" | tee -a "$LOGFILE"
+
+# Clean stale repository locks (safety)
+echo "---- $(date '+%F %T') Cleaning stale locks ----" | tee -a "$LOGFILE"
+/usr/bin/restic unlock >> "$LOGFILE" 2>&1
 
 # === Start ===
 echo "==== $DATE Starting backup ====" | tee -a "$LOGFILE"
 
 # === Run backup with live progress and logging ===
-/usr/bin/restic backup --verbose=1 \
+/usr/bin/restic backup --verbose=1 --parent latest\
     --files-from /etc/restic/include.txt \
     --exclude-file /etc/restic/exclude.txt 2>&1 | tee -a "$LOGFILE"
 
