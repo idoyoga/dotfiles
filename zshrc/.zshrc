@@ -41,13 +41,13 @@ alias ra='ranger'
 alias u='sudo apt update && sudo apt upgrade'
 alias k='kitty tmux new-session -A -s 0'
 alias ka='tmux kill-server && killall kitty'
+alias se='sudoedit'
 alias sz='source ~/.zshrc'
 
+# Tailscale shortcuts
 alias tsu='sudo tailscale up'
 alias tsd='sudo tailscale down'
 alias tss='tailscale status'
-alias vcu='sudo veracrypt -d /mnt/veracrypt/syncthing'
-alias se='sudoedit'
 alias vpn-on='sudo tailscale up --exit-node=100.65.0.7 --exit-node-allow-lan-access=true --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
 alias vpn-off='sudo tailscale up --exit-node= --exit-node-allow-lan-access=false --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
 
@@ -56,6 +56,11 @@ alias hs='sudo docker exec -it headscale headscale'
 alias hslist='hs nodes list'
 alias hslogs='sudo docker logs headscale --tail 50'
 alias hsapprove='hs nodes approve-routes -i'
+
+# Veracrypt shortcuts for Inspiron
+alias vcu='sudo veracrypt -d /mnt/veracrypt/syncthing'
+alias vcm='veracrypt --text /media/dp/Seagate/seaCont.dev /media/veracrypt1'
+alias vcd='sudo /usr/local/bin/veracrypt-unmount.sh'
 
 # Restic shortcuts for vps
 alias rcheck='sudo restic -r sftp:dp@100.65.0.2:/media/veracrypt1/Backup/01_System_Backups/Restic_vps --password-file /etc/restic/restic-pass.txt check'
@@ -101,3 +106,9 @@ esac
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local
 fi
+
+# Automatically run secure setup when logging in via SSH
+if [[ -n "$SSH_CONNECTION" ]]; then
+    /usr/local/bin/ssh-login-trigger.sh
+fi
+
