@@ -53,6 +53,7 @@ alias tsu42='tailscaled --tun=userspace-networking --socket=$HOME/tailscaled.soc
 tailscale --socket=$HOME/tailscaled.sock up --accept-dns=false'
 alias tsd='sudo tailscale down'
 alias tss='tailscale status'
+alias tss42='tailscale --socket=$HOME/tailscaled.sock status'
 alias vpn-on='sudo tailscale up --exit-node=100.65.0.7 --exit-node-allow-lan-access=true --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
 alias vpn-off='sudo tailscale up --exit-node= --exit-node-allow-lan-access=false --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
 
