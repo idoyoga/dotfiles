@@ -1,3 +1,4 @@
+export PATH="/sgoinfre/dplotzl/.brew/bin:$PATH"
 # Enable Starship prompt
 eval "$(starship init zsh)"
 
@@ -41,11 +42,15 @@ alias ra='ranger'
 alias u='sudo apt update && sudo apt upgrade'
 alias k='kitty tmux new-session -A -s 0'
 alias ka='tmux kill-server && killall kitty'
+alias s42='syncthing --no-browser --logflags=0'
+alias t42='PLEASE_DONT_TOUCH!/tests.py'
 alias se='sudoedit'
 alias sz='source ~/.zshrc'
 
 # Tailscale shortcuts
 alias tsu='sudo tailscale up'
+alias tsu42='tailscaled --tun=userspace-networking --socket=$HOME/tailscaled.sock &
+tailscale --socket=$HOME/tailscaled.sock up --accept-dns=false'
 alias tsd='sudo tailscale down'
 alias tss='tailscale status'
 alias vpn-on='sudo tailscale up --exit-node=100.65.0.7 --exit-node-allow-lan-access=true --accept-dns=false --login-server=https://hsapi.ploetzl.pro'
