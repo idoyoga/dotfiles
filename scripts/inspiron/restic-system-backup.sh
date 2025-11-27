@@ -3,7 +3,7 @@
 # Trigger VPS restic backup from Inspiron when HDD is mounted
 # ================================================================
 
-VPS_IP="100.65.0.7"
+VPS_IP="100.65.0.9"
 LOGFILE="/var/log/restic-udev.log"
 
 # Abort if external HDD is not mounted
@@ -22,6 +22,6 @@ fi
 ssh -i /home/dp/.ssh/id_ed25519_inspiron \
     -o StrictHostKeyChecking=accept-new \
     -o User=dp \
-    100.65.0.7 "sudo /usr/local/bin/restic-system-backup.sh" 2>&1 | tee -a "$LOGFILE"
+    100.65.0.9 "sudo /usr/local/bin/restic-system-backup.sh" 2>&1 | tee -a "$LOGFILE"
 
 echo "[$(date '+%F %T')] Trigger script finished." | tee -a "$LOGFILE"

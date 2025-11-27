@@ -5,7 +5,7 @@
 # =====================================================================
 
 PHONE_SRC="/sdcard/Android/media/com.whatsapp/WhatsApp"
-TMP_DIR="$HOME/Downloads/tmp/WhatsAppBackup"
+TMP_DIR="/home/$SUDO_USER/Downloads/WhatsAppBackup"
 RESTIC_REPO="/media/veracrypt1/Backup/01_System_Backups/Restic_inspiron"
 RESTIC_PASS="/etc/restic/restic-pass.txt"
 RESTIC_INCLUDE="/etc/restic/include.txt"

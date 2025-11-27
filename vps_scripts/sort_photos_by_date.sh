@@ -5,11 +5,6 @@ SRC="/mnt/veracrypt/syncthing/phone/photos/inbox"
 DEST="/mnt/veracrypt/syncthing/phone/photos/archive"
 LOG="/var/log/sort_photos_by_date.log"
 
-# Ensure Syncthing folder marker always exists
-if [ ! -e "$SRC/.stfolder" ]; then
-    touch "$SRC/.stfolder"
-fi
-
 mkdir -p "$DEST"
 echo "==== $(date '+%F %T') Starting media sort ====" >> "$LOG"
 
@@ -28,15 +23,11 @@ find "$SRC" -type f \( -iname "*.mp4" -o -iname "*.mov" -o -iname "*.avi" -o -in
   MONTH=${DATE:5:2}
   TARGET="$DEST/$YEAR/$MONTH"
   mkdir -p "$TARGET"
-  [ "$(basename "$FILE")" = ".stfolder" ] && continue
   mv -n "$FILE" "$TARGET/" && echo "Moved video: $FILE → $TARGET/" >> "$LOG"
 done
 
 # --- Deduplicate identical files (keep one copy) ---
-/usr/bin/fdupes -rdN --exclude=".stfolder" "$DEST" >> "$LOG" 2>&1
+/usr/bin/fdupes -rdN "$DEST" >> "$LOG" 2>&1
 
 echo "==== $(date '+%F %T') Completed media sort ====" >> "$LOG"
-
-# Remove only non-marker files (keep .stfolder)
-find "$SRC" -maxdepth 1 -type f ! -name '.stfolder' -delete
 

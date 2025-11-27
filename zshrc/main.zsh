@@ -119,9 +119,3 @@ esac
 if [ -f ~/.zshrc.local ]; then
   source ~/.zshrc.local
 fi
-
-# Automatically run secure setup when logging in via SSH
-if [[ -n "$SSH_CONNECTION" ]]; then
-    /usr/local/bin/ssh-login-trigger.sh
-fi
-
