@@ -87,3 +87,11 @@ fi
 
 rm -f "$BACKUP_OUTPUT"
 
+# --- Step 9: Cleanup temporary files (only if backup succeeded) ---
+if [ "$RESTIC_OK" = true ]; then
+    notify "Cleanup 🧹" "Removing temporary WhatsApp files..."
+    rm -rf "$TMP_DIR"
+    echo "[$(date '+%F %T')] Temporary directory $TMP_DIR removed." | tee -a "$LOGFILE"
+else
+    echo "[$(date '+%F %T')] Backup failed — keeping $TMP_DIR for inspection." | tee -a "$LOGFILE"
+fi
